@@ -1,0 +1,3 @@
+[submodule "components/fp-sdk"]
+	path = components/fp-sdk
+	url = git@github.com:FlyyingPiggy2020/fp-sdk.git

@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "project_name": "armfly_foc_demo",
+  "author": "Lu Xianfan",
+  "last_editors": "Lu Xianfan",
+  "default_board": "armfly-v7",
+  "default_mcu": "STM32H743XIH6",
+  "default_ide": "mdk",
+  "default_toolchain": "armclang",
+  "sdk_root": "components/fp-sdk",
+  "sdk_mode": "submodule",
+  "sdk_source": "git@github.com:FlyyingPiggy2020/fp-sdk.git",
+  "lib_root": "lib",
+  "lib_mode": "local",
+  "lib_source": "",
+  "paths": {
+    "app": "app",
+    "device": "components/fp-sdk/drivers/device",
+    "package": "components/fp-sdk/packages",
+    "utility": "components/fp-sdk/utilities",
+    "board_root": "board",
+    "bsp": "board/{board}/bsp",
+    "docs": "docs"
+  },
+  "profiles": {}
+}
