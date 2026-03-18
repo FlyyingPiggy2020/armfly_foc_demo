@@ -340,7 +340,7 @@
               <MiscControls>-std=c11</MiscControls>
               <Define>USE_HAL_DRIVER,STM32H743xx,FP_INCLDUE_BOARD_OPTIONS_FILE</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\app;..\src;..\cpu\inc;..\config;..\..\..\components\fp-sdk\inc;..\..\..\components\fp-sdk\drivers\core;..\..\..\components\fp-sdk\drivers\device;..\..\..\components\fp-sdk\packages;..\..\..\components\fp-sdk\utilities;..\..\..\lib\STMicroelectronics\stm32h7xx\arch\inc;..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\inc;..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\inc\Legacy</IncludePath>
+              <IncludePath>..\..\..\app;..\src;..\cpu\inc;..\config;..\bsp\motor;..\..\..\components\fp-sdk\inc;..\..\..\components\fp-sdk\drivers\core;..\..\..\components\fp-sdk\drivers\device;..\..\..\components\fp-sdk\packages;..\..\..\components\fp-sdk\utilities;..\..\..\components\fp-sdk\motion\foc;..\..\..\components\fp-sdk\motion\foc\math;..\..\..\components\fp-sdk\motion\foc\control;..\..\..\components\fp-sdk\motion\foc\profile;..\..\..\lib\STMicroelectronics\stm32h7xx\arch\inc;..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\inc;..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\inc\Legacy</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -533,6 +533,91 @@
               <FileName>stm32h7xx_hal_uart_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_uart_ex.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+          <Group>
+            <GroupName>bsp/motor</GroupName>
+            <Files>
+              <File>
+                <FileName>foc_port.c</FileName>
+                <FileType>1</FileType>
+                <FilePath>..\bsp\motor\foc_port.c</FilePath>
+              </File>
+              <File>
+                <FileName>motor_device.c</FileName>
+                <FileType>1</FileType>
+                <FilePath>..\bsp\motor\motor_device.c</FilePath>
+              </File>
+            </Files>
+          </Group>
+        <Group>
+          <GroupName>app</GroupName>
+          <Files>
+            <File>
+              <FileName>app_foc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\app\app_foc.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>fp-sdk/core</GroupName>
+          <Files>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\drivers\core\device.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\drivers\core\driver.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>fp-sdk/device</GroupName>
+          <Files>
+            <File>
+              <FileName>analog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\drivers\device\analog.c</FilePath>
+            </File>
+            <File>
+              <FileName>pwmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\drivers\device\pwmc.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>fp-sdk/motion/foc</GroupName>
+          <Files>
+            <File>
+              <FileName>pmsm_foc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\motion\foc\pmsm_foc.c</FilePath>
+            </File>
+            <File>
+              <FileName>foc_transform.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\motion\foc\math\foc_transform.c</FilePath>
+            </File>
+            <File>
+              <FileName>foc_svpwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\motion\foc\math\foc_svpwm.c</FilePath>
+            </File>
+            <File>
+              <FileName>foc_pi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\motion\foc\control\foc_pi.c</FilePath>
+            </File>
+            <File>
+              <FileName>foc_profile.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\motion\foc\profile\foc_profile.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -1,0 +1,11 @@
+CompileFlags:
+  Add: 
+    # 将路径中的双反斜杠 \\ 改为单正斜杠 /，Clangd 在 Windows 下对正斜杠兼容性更好
+    - "-IC:/Users/w1545/AppData/Local/Keil_v5/ARM/ARMCLANG/include"
+    - "--target=arm-arm-none-eabi"
+    - "-mcpu=cortex-m7"
+    - "-Wno-unknown-warning-option"
+    - "-Wno-invalid-source-encoding"
+
+Diagnostics:
+  UnusedIncludes: None
