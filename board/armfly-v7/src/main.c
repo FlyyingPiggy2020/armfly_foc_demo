@@ -10,30 +10,30 @@
 
 /*---------- includes ----------*/
 #include "app_foc.h"
-#include "cpu.h"
+#include "options.h"
 #include "driver.h"
 /*---------- macro ----------*/
 /*---------- type define ----------*/
 /*---------- variable prototype ----------*/
 /*---------- function prototype ----------*/
 /*---------- variable ----------*/
-static app_foc_t g_app_foc;
 /*---------- function ----------*/
 int main(void)
 {
     cpu_config();
 
     if (driver_search_device() != E_OK) {
-        xlog_cout("main: driver_search_device failed\r\n");
+        xlog_count("main: driver_search_device failed\r\n");
         while (1) {
         }
     }
 
-    if (!app_foc_init(&g_app_foc)) {
-        xlog_cout("main: app_foc_init failed\r\n");
-        while (1) {
+    if (!app_foc_init())
+        {
+            xlog_count("main: app_foc_init failed\r\n");
+            while (1) {
+            }
         }
-    }
 
     while (1) {
     }

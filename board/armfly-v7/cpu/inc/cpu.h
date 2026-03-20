@@ -3,8 +3,8 @@
  * @FilePath     : cpu.h
  * @Author       : Lu Xianfan
  * @Date         : 2026-03-16 11:39:57
- * @LastEditors  : Lu Xianfan
- * @LastEditTime : 2026-03-16 11:39:57
+ * @LastEditors  : lxf_zjnb@qq.com
+ * @LastEditTime : 2026-03-20 09:31:08
  * @Brief        : armfly-v7 CPU abstraction interface
  */
 
@@ -19,8 +19,8 @@ extern "C" {
 #include <stdint.h>
 /*---------- macro ----------*/
 #define SYS_MODEL "armfly_foc_demo"
-#define SYS_DATE  "1970-01-01"
-#define SYS_VER   "S0.00.01"
+#define SYS_DATE  "2026-03-20"
+#define SYS_VER   "S1.01.01"
 /*---------- type define ----------*/
 /*---------- variable prototype ----------*/
 /*---------- function prototype ----------*/

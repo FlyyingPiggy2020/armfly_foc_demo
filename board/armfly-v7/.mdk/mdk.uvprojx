@@ -70,9 +70,9 @@
             <nStopU2X>0</nStopU2X>
           </BeforeCompile>
           <BeforeMake>
-            <RunUserProg1>0</RunUserProg1>
+            <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
+            <UserProg1Name>python ..\..\..\fbtools.py before</UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -80,10 +80,10 @@
             <nStopB2X>0</nStopB2X>
           </BeforeMake>
           <AfterMake>
-            <RunUserProg1>0</RunUserProg1>
-            <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <RunUserProg1>1</RunUserProg1>
+            <RunUserProg2>1</RunUserProg2>
+            <UserProg1Name>python ..\..\..\fbtools.py after</UserProg1Name>
+            <UserProg2Name>keil-build-viewer.exe</UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopA1X>0</nStopA1X>
@@ -314,14 +314,14 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>2</Optim>
+            <Optim>1</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
             <Strict>0</Strict>
             <EnumInt>0</EnumInt>
             <PlainCh>0</PlainCh>
-            <Ropi>0</Ropi>
+            <Ropi>1</Ropi>
             <Rwpi>0</Rwpi>
             <wLevel>3</wLevel>
             <uThumb>0</uThumb>
@@ -338,7 +338,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>-std=c11</MiscControls>
-              <Define>USE_HAL_DRIVER,STM32H743xx,FP_INCLDUE_BOARD_OPTIONS_FILE</Define>
+              <Define>USE_HAL_DRIVER,STM32H743xx,FP_INCLDUE_BOARD_OPTIONS_FILE,FOC_OPTIONS_FILE</Define>
               <Undefine></Undefine>
               <IncludePath>..\..\..\app;..\src;..\cpu\inc;..\config;..\bsp\motor;..\..\..\components\fp-sdk\inc;..\..\..\components\fp-sdk\drivers\core;..\..\..\components\fp-sdk\drivers\device;..\..\..\components\fp-sdk\packages;..\..\..\components\fp-sdk\utilities;..\..\..\components\fp-sdk\motion\foc;..\..\..\components\fp-sdk\motion\foc\math;..\..\..\components\fp-sdk\motion\foc\control;..\..\..\components\fp-sdk\motion\foc\profile;..\..\..\lib\STMicroelectronics\stm32h7xx\arch\inc;..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\inc;..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\inc\Legacy</IncludePath>
             </VariousControls>
@@ -534,23 +534,38 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_uart_ex.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32h7xx_hal_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_adc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32h7xx_hal_adc_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_adc_ex.c</FilePath>
+            </File>
           </Files>
         </Group>
-          <Group>
-            <GroupName>bsp/motor</GroupName>
-            <Files>
-              <File>
-                <FileName>foc_port.c</FileName>
-                <FileType>1</FileType>
-                <FilePath>..\bsp\motor\foc_port.c</FilePath>
-              </File>
-              <File>
-                <FileName>motor_device.c</FileName>
-                <FileType>1</FileType>
-                <FilePath>..\bsp\motor\motor_device.c</FilePath>
-              </File>
-            </Files>
-          </Group>
+        <Group>
+          <GroupName>bsp/motor</GroupName>
+          <Files>
+            <File>
+              <FileName>foc_port.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\bsp\motor\foc_port.c</FilePath>
+            </File>
+            <File>
+              <FileName>motor_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\bsp\motor\motor_adc.c</FilePath>
+            </File>
+            <File>
+              <FileName>motor_pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\bsp\motor\motor_pwm.c</FilePath>
+            </File>
+          </Files>
+        </Group>
         <Group>
           <GroupName>app</GroupName>
           <Files>

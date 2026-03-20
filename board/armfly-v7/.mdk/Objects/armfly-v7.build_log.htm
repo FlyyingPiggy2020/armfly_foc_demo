@@ -1,0 +1,149 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: μVision V5.43.1.0
+Copyright (C) 2025 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: lu w154562451@outlook.com, xianfan, LIC=KIVNB-2LHNH-SG97K-ZQE09-ZPP1K-KLZBA
+ 
+Tool Versions:
+Toolchain:       MDK-ARM Professional  Version: 5.43.0.0
+Toolchain Path:  C:\Users\w1545\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin
+C Compiler:      ArmClang.exe V6.24
+Assembler:       Armasm.exe V6.24
+Linker/Locator:  ArmLink.exe V6.24
+Library Manager: ArmAr.exe V6.24
+Hex Converter:   FromElf.exe V6.24
+CPU DLL:         SARMCM3.DLL V5.43.0.0
+Dialog DLL:      DCM.DLL V1.17.5.0
+Target DLL:      CMSIS_AGDI.dll V1.33.24.0
+Dialog DLL:      TCM.DLL V1.56.6.0
+ 
+<h2>Project:</h2>
+C:\Users\w1545\Desktop\Project\foc_pmsm_demo\armfly_foc_demo\board\armfly-v7\.mdk\mdk.uvprojx
+Project File Date:  03/19/2026
+
+<h2>Output:</h2>
+*** Using Compiler 'V6.24', folder: 'C:\Users\w1545\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin'
+Rebuild target 'mdk'
+Before Build - User command #1: python ..\..\..\fbtools.py before
+执行构建前操作...
+[OK] 构建前操作完成
+compiling main.c...
+assembling startup_stm32h743xx.s...
+compiling stm32h7xx_it.c...
+compiling system_stm32h7xx.c...
+compiling cpu.c...
+compiling stm32h7xx_hal_cortex.c...
+compiling stm32h7xx_hal.c...
+compiling stm32h7xx_hal_dma_ex.c...
+compiling stm32h7xx_hal_exti.c...
+compiling stm32h7xx_hal_dma.c...
+compiling stm32h7xx_hal_flash.c...
+compiling stm32h7xx_hal_flash_ex.c...
+compiling stm32h7xx_hal_gpio.c...
+compiling stm32h7xx_hal_mdma.c...
+compiling stm32h7xx_hal_pwr.c...
+compiling stm32h7xx_hal_pwr_ex.c...
+compiling stm32h7xx_hal_rcc.c...
+compiling stm32h7xx_hal_rcc_ex.c...
+compiling stm32h7xx_hal_tim_ex.c...
+compiling stm32h7xx_hal_uart.c...
+compiling stm32h7xx_hal_uart_ex.c...
+compiling stm32h7xx_hal_tim.c...
+compiling foc_port.c...
+compiling stm32h7xx_hal_adc_ex.c...
+compiling stm32h7xx_hal_adc.c...
+compiling driver.c...
+compiling app_foc.c...
+compiling device.c...
+compiling motor_pwm.c...
+compiling motor_adc.c...
+compiling analog.c...
+compiling pwmc.c...
+compiling foc_svpwm.c...
+compiling foc_transform.c...
+compiling pmsm_foc.c...
+compiling foc_pi.c...
+compiling foc_profile.c...
+linking...
+Program Size: Code=52304 RO-data=896 RW-data=560 ZI-data=2228  
+FromELF: creating hex file...
+After Build - User command #1: python ..\..\..\fbtools.py after
+执行构建后操作...
+Generating compile_commands.json...
+Successfully generated compile_commands.json to C:\Users\w1545\Desktop\Project\foc_pmsm_demo\armfly_foc_demo\build\compile_commands.json
+[OK] compile_commands.json generated successfully!
+[OK] 构建后操作完成
+After Build - User command #2: keil-build-viewer.exe
+=================================================== keil-build-viewer v1.2 ==================================================
+[mdk.uvprojx]  [mdk]  [STM32H743XIHx]
+ 
+-----------------------------------------------------------------------------------------------------------------------------------------
+                                      FILE(s)                                     |         RAM (byte)       |       FLASH (byte)       |
+-----------------------------------------------------------------------------------------------------------------------------------------
+..\..\..\components\fp-sdk\drivers\device\analog.c():                             |          68              |         798              |
+..\..\..\app\app_foc.c():                                                         |         244              |         676              |
+..\cpu\cpu.c():                                                                   |          24              |         619              |
+..\..\..\components\fp-sdk\drivers\core\device.c():                               |           0              |         434              |
+..\..\..\components\fp-sdk\drivers\core\driver.c():                               |           0              |         132              |
+..\..\..\components\fp-sdk\motion\foc\control\foc_pi.c():                         |           0              |         382              |
+..\bsp\motor\foc_port.c():                                                        |         144              |         516              |
+..\..\..\components\fp-sdk\motion\foc\profile\foc_profile.c():                    |           0              |         290              |
+..\..\..\components\fp-sdk\motion\foc\math\foc_svpwm.c():                         |           0              |         622              |
+..\..\..\components\fp-sdk\motion\foc\math\foc_transform.c():                     |           0              |         416              |
+..\src\main.c():                                                                  |           0              |          40              |
+..\bsp\motor\motor_adc.c():                                                       |         298              |         900              |
+..\bsp\motor\motor_pwm.c():                                                       |         244              |        1246              |
+..\..\..\components\fp-sdk\motion\foc\pmsm_foc.c():                               |           0              |         730              |
+..\..\..\components\fp-sdk\drivers\device\pwmc.c():                               |         108              |        2168              |
+..\cpu\arm\startup_stm32h743xx.s():                                               |        1536              |         736              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal.c():           |           9              |         347              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_adc.c():       |           0              |        5708              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_adc_ex.c():    |           0              |         982              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_cortex.c():    |           0              |         478              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_dma.c():       |           0              |       11422              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_gpio.c():      |           0              |        1048              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_pwr_ex.c():    |           0              |         162              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_rcc.c():       |           0              |        4974              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_rcc_ex.c():    |           0              |       10350              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_tim.c():       |           0              |        3410              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_tim_ex.c():    |           0              |        1088              |
+..\cpu\stm32h7xx_it.c():                                                          |           0              |          52              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\arch\system_stm32h7xx.c():              |           8              |         422              |
+-----------------------------------------------------------------------------------------------------------------------------------------
+LR_IROM1
+        SRAM 1               [0x20000000 | 0x00020000 (131072)]
+                DEV_REGION   [0x20000000]|■■■■■■■■■_________________________________________| (       96 /      512 )  18.8%  
+                DRV_REGION   [0x20000200]|■■■■■■■___________________________________________| (       72 /      512 )  14.1%  
+                RW_DTCM      [0x20000400]|■__________________________________________________| (      244 / 127.0 KB )   0.2%  
+ 
+        SRAM 2               [0x24000000 | 0x00080000 (524288)]
+                RW_AXI_SRAM  [0x24000000]|■__________________________________________________| (   2.3 KB / 512.0 KB )   0.5%  
+ 
+        FLASH 1              [0x08000000 | 0x00200000 (2097152)]
+                ER_IROM1     [0x08000000]|■_________________________________________________| (  52.0 KB /  2.00 MB )   2.5%  
+ 
+        UNKNOWN
+                RW_D2_DMA    [0x30000000]|■__________________________________________________| (        8 / 288.0 KB )   0.0%  
+ 
+Maximum Stack Usage =        512 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)
+ 
+=============================================================================================================================
+".\Objects\armfly-v7.axf" - 0 Error(s), 0 Warning(s).
+
+<h2>Software Packages used:</h2>
+
+Package Vendor: Keil
+                https://www.keil.com/pack/Keil.STM32H7xx_DFP.4.1.2.pack
+                Keil::STM32H7xx_DFP@4.1.2
+                STMicroelectronics STM32H7 Series Device Support
+
+<h2>Collection of Component include folders:</h2>
+
+<h2>Collection of Component Files used:</h2>
+Build Time Elapsed:  00:00:06
+</pre>
+</body>
+</html>

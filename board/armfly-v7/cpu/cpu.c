@@ -9,24 +9,67 @@
  */
 
 /*---------- includes ----------*/
-#include "cpu.h"
+#include "options.h"
 #include "flash_map.h"
 #include "stm32h7xx_hal.h"
 #include <string.h>
 /*---------- macro ----------*/
 /*---------- type define ----------*/
 /*---------- variable prototype ----------*/
+#if defined(__CC_ARM) || defined(__ARMCC_VERSION)
+extern uint32_t Image$$ER_IROM1$$Base[];
+#elif defined(__GNUC__)
+extern uint32_t _sisr_vector;
+#else
+#error "The compiler not armcc, armclang or gcc"
+#endif
+const char sys_Version[] __attribute__((section(".ARM.__at_0x08004000"))) = SYS_MODEL "-" SYS_DATE "-" SYS_VER "\0";
+static uint8_t uuid[CONFIG_CHIP_UUID_SIZE] = { 0 };
+
 static volatile uint64_t s_ticks = 0;
 static volatile uint32_t s_critical_depth = 0;
 /*---------- function prototype ----------*/
-static void _cpu_system_clock_config(void);
+static void SystemClock_Config(void);
 static void _cpu_error_handler(void);
 /*---------- variable ----------*/
 /*---------- function ----------*/
 void cpu_config(void)
 {
+    uint32_t relocate = 0;
+
+//    /* 1. 设置中断向量表 */
+//#if defined(__CC_ARM) || defined(__ARMCC_VERSION)
+//    relocate = (uint32_t)Image$$ER_IROM1$$Base;
+//#elif defined(__GNUC__)
+//    relocate = (uint32_t)&_sisr_vector;
+//#endif
+
+//#ifdef VECT_TAB_SRAM
+//    SCB->VTOR = SRAM_BASE | (relocate - SRAM_BASE);
+//#else
+//    SCB->VTOR = FLASH_BASE | (relocate - FLASH_BASE);
+//#endif
+
     HAL_Init();
-    _cpu_system_clock_config();
+    
+    /* 2. 配置时钟树 */
+    SystemClock_Config();
+    
+    /* 3. 使能全局中断，退出临界段 */
+    exit_critical();
+    
+    /* 6. 设置嘀嗒定时器为1Khz 内部会将SysTick_IRQn的优先级设置为15(最低) */
+    SysTick_Config(SystemCoreClock / 1000UL);
+    
+    /* 7. 使能SEGGER RTT */
+#if CONFIG_SEGGERRTT_ENABLE
+    SEGGER_RTT_Init();
+    SEGGER_RTT_ConfigUpBuffer(0, NULL, NULL, 0, SEGGER_RTT_MODE_NO_BLOCK_SKIP);
+#endif
+
+    /* 8. 获取芯片唯一的UUID */
+    memcpy(uuid, (const void *)CONFIG_CHIP_UUID_BASE, CONFIG_CHIP_UUID_SIZE);
+    PRINT_BUFFER_CONTENT(COLOR_BLUE, "UUID:", uuid, sizeof(uuid));
 }
 
 void cpu_reset(void)
@@ -94,7 +137,7 @@ void enable_irq(void)
     }
 }
 
-static void _cpu_system_clock_config(void)
+static void SystemClock_Config(void)
 {
     RCC_OscInitTypeDef rcc_osc_init_struct = { 0 };
     RCC_ClkInitTypeDef rcc_clk_init_struct = { 0 };
