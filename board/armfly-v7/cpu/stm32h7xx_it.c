@@ -11,6 +11,7 @@
 /*---------- includes ----------*/
 #include "stm32h7xx_it.h"
 #include "stm32h7xx_hal.h"
+#include "soft_timer.h"
 /*---------- macro ----------*/
 /*---------- type define ----------*/
 /*---------- variable prototype ----------*/
@@ -63,6 +64,7 @@ void SysTick_Handler(void)
 {
     HAL_IncTick();
     tick_inc();
+    fp_sftm_tick_inc(1U);
 }
 
 /**

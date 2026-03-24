@@ -4,8 +4,8 @@
  * @Author       : Codex
  * @Date         : 2026-03-17 15:55:00
  * @LastEditors  : lxf_zjnb@qq.com
- * @LastEditTime : 2026-03-20 10:10:00
- * @Brief        : FOC 应用封装入口
+ * @LastEditTime : 2026-03-20 18:20:00
+ * @Brief        : FOC 应用层接口
  */
 
 #ifndef __APP_FOC_H__
@@ -15,31 +15,28 @@
 extern "C" {
 #endif
 /*---------- includes ----------*/
-#include "device.h"
-#include "foc_port.h"
+#include <stdbool.h>
+#include "message_bus.h"
+#include "bsp_foc.h"
 #include "pmsm_foc.h"
 /*---------- macro ----------*/
 /*---------- type define ----------*/
 typedef struct {
     pmsm_foc_t foc;
-    device_t *pwm_dev;
-    device_t *current_dev;
+    struct msgbus_node node;
+    msgbus_service_t foc_service;
+    bool is_started;
+    foc_scalar_t speed_ref;
 } app_foc_t;
 /*---------- variable prototype ----------*/
 /*---------- function prototype ----------*/
-/**
- * @brief  初始化 FOC 应用对象
- * @return true=初始化成功, false=初始化失败
- */
 bool app_foc_init(void);
-
-/**
- * @brief  获取应用层持有的 FOC 控制器对象
- * @return pmsm_foc_t 指针
- */
+void app_foc_toggle_enable(void);
+void app_foc_speed_up(void);
+void app_foc_speed_down(void);
 pmsm_foc_t *app_foc_get_foc(void);
 /*---------- end of file ----------*/
 #ifdef __cplusplus
 }
 #endif
-#endif
+#endif /* __APP_FOC_H__ */

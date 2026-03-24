@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2026 by Lu Xianfan.
- * @FilePath     : motor_pwm.c
+ * @FilePath     : board/armfly-v7/bsp/bsp_pwm.c
  * @Author       : Codex
  * @Date         : 2026-03-18 13:20:00
  * @LastEditors  : lxf_zjnb@qq.com
@@ -31,6 +31,11 @@ TIM_HandleTypeDef htim1;
 static pwmc_describe_t s_motor_pwm_desc = {
     .is_enable = false,
     .is_manual_freq = true,
+    .priv.channel = {
+        [PWMC_CHANNEL1] = { .used = true, .duty = 0.5f, .crr = 0U },
+        [PWMC_CHANNEL2] = { .used = true, .duty = 0.5f, .crr = 0U },
+        [PWMC_CHANNEL3] = { .used = true, .duty = 0.5f, .crr = 0U },
+    },
     .ops = {
         .init = _motor_pwm_init,
         .update_crr = _motor_pwm_update_crr,
@@ -155,6 +160,20 @@ static int32_t _motor_pwm_update_crr(uint8_t channel, uint32_t crr)
 {
     if (channel >= IOCTL_CONFIG_PWMC_CHANNEL) {
         return E_WRONG_ARGS;
+    }
+
+    switch (channel) {
+        case PWMC_CHANNEL1:
+            __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, crr);
+            break;
+        case PWMC_CHANNEL2:
+            __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, crr);
+            break;
+        case PWMC_CHANNEL3:
+            __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, crr);
+            break;
+        default:
+            return E_WRONG_ARGS;
     }
 
     return E_OK;

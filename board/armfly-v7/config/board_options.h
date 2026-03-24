@@ -28,10 +28,6 @@ extern "C" {
 #define __ticks2ms(ticks)           (ticks)
 #define __ms2ticks(ms)              (ms)
 
-#ifndef xlog_cout
-#define xlog_cout xlog_count
-#endif
-
 #ifndef ASSERT
 #define ASSERT(expr)                                      \
     do {                                                  \

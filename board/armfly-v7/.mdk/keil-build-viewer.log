@@ -31,16 +31,16 @@
 
 [region info]
 [load region] LR_IROM1
-	[execution region] ER_IROM1, 0x08000000, 0x00200000, 0x0000CFD0 [type] 2 [ID] 4
+	[execution region] ER_IROM1, 0x08000000, 0x00200000, 0x00014340 [type] 2 [ID] 4
 
-	[execution region] DEV_REGION, 0x20000000, 0x00000200, 0x00000060 [type] 1 [ID] 2
+	[execution region] DEV_REGION, 0x20000000, 0x00000200, 0x000000C0 [type] 1 [ID] 2
 
-	[execution region] DRV_REGION, 0x20000200, 0x00000200, 0x00000048 [type] 1 [ID] 2
+	[execution region] DRV_REGION, 0x20000200, 0x00000200, 0x00000090 [type] 1 [ID] 2
 
-	[execution region] RW_DTCM, 0x20000400, 0x0001FC00, 0x000000F4 [type] 1 [ID] 2
+	[execution region] RW_DTCM, 0x20000400, 0x0001FC00, 0x00000114 [type] 1 [ID] 2
 
-	[execution region] RW_AXI_SRAM, 0x24000000, 0x00080000, 0x00000940 [type] 1 [ID] 3
-		[ZI block] addr: 0x24000090, size: 0x000008B0 (2224)
+	[execution region] RW_AXI_SRAM, 0x24000000, 0x00080000, 0x00001D80 [type] 1 [ID] 3
+		[ZI block] addr: 0x240000C8, size: 0x00001CB8 (7352)
 
 	[execution region] RW_D2_DMA, 0x30000000, 0x00048000, 0x00000008 [type] 3 [ID] 1
 
@@ -51,19 +51,31 @@
 [object in map file]
 [object name] analog.o                  [path] ..\..\..\components\fp-sdk\drivers\device\analog.c
 [object name] app_foc.o                 [path] ..\..\..\app\app_foc.c
+[object name] app_key.o                 [path] ..\..\..\app\app_key.c
+[object name] app_msgbus.o              [path] ..\..\..\app\app_msgbus.c
+[object name] bsp_adc.o                 [path] ..\bsp\bsp_adc.c
+[object name] bsp_foc.o                 [path] ..\bsp\bsp_foc.c
+[object name] bsp_key.o                 [path] ..\bsp\bsp_key.c
+[object name] bsp_pwm.o                 [path] ..\bsp\bsp_pwm.c
+[object name] bsp_uart.o                [path] ..\bsp\bsp_uart.c
+[object name] button.o                  [path] ..\..\..\components\fp-sdk\drivers\device\input\button.c
 [object name] cpu.o                     [path] ..\cpu\cpu.c
+[object name] dev_uart.o                [path] ..\..\..\components\fp-sdk\drivers\device\dev_uart.c
 [object name] device.o                  [path] ..\..\..\components\fp-sdk\drivers\core\device.c
 [object name] driver.o                  [path] ..\..\..\components\fp-sdk\drivers\core\driver.c
 [object name] foc_pi.o                  [path] ..\..\..\components\fp-sdk\motion\foc\control\foc_pi.c
-[object name] foc_port.o                [path] ..\bsp\motor\foc_port.c
 [object name] foc_profile.o             [path] ..\..\..\components\fp-sdk\motion\foc\profile\foc_profile.c
 [object name] foc_svpwm.o               [path] ..\..\..\components\fp-sdk\motion\foc\math\foc_svpwm.c
 [object name] foc_transform.o           [path] ..\..\..\components\fp-sdk\motion\foc\math\foc_transform.c
+[object name] fplog.o                   [path] ..\..\..\components\fp-sdk\utilities\fplog.c
+[object name] heap.o                    [path] ..\..\..\components\fp-sdk\utilities\heap.c
+[object name] logic_key.o               [path] ..\..\..\app\logic_key.c
 [object name] main.o                    [path] ..\src\main.c
-[object name] motor_adc.o               [path] ..\bsp\motor\motor_adc.c
-[object name] motor_pwm.o               [path] ..\bsp\motor\motor_pwm.c
+[object name] message_bus.o             [path] ..\..\..\components\fp-sdk\utilities\message_bus\message_bus.c
+[object name] pingpong.o                [path] ..\..\..\components\fp-sdk\utilities\pingpong.c
 [object name] pmsm_foc.o                [path] ..\..\..\components\fp-sdk\motion\foc\pmsm_foc.c
 [object name] pwmc.o                    [path] ..\..\..\components\fp-sdk\drivers\device\pwmc.c
+[object name] soft_timer.o              [path] ..\..\..\components\fp-sdk\utilities\soft_timer.c
 [object name] startup_stm32h743xx.o     [path] ..\cpu\arm\startup_stm32h743xx.s
 [object name] stm32h7xx_hal.o           [path] ..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal.c
 [object name] stm32h7xx_hal_adc.o       [path] ..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_adc.c
@@ -76,10 +88,21 @@
 [object name] stm32h7xx_hal_rcc_ex.o    [path] ..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_rcc_ex.c
 [object name] stm32h7xx_hal_tim.o       [path] ..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_tim.c
 [object name] stm32h7xx_hal_tim_ex.o    [path] ..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_tim_ex.c
+[object name] stm32h7xx_hal_uart.o      [path] ..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_uart.c
+[object name] stm32h7xx_hal_uart_ex.o   [path] ..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_uart_ex.c
 [object name] stm32h7xx_it.o            [path] ..\cpu\stm32h7xx_it.c
 [object name] system_stm32h7xx.o        [path] ..\..\..\lib\STMicroelectronics\stm32h7xx\arch\system_stm32h7xx.c
 
 [file path in keil project]
+[old name] app_foc.o                 [type] 1   [path] ..\..\..\app\app_foc.c
+[old name] app_key.o                 [type] 1   [path] ..\..\..\app\app_key.c
+[old name] logic_key.o               [type] 1   [path] ..\..\..\app\logic_key.c
+[old name] app_msgbus.o              [type] 1   [path] ..\..\..\app\app_msgbus.c
+[old name] bsp_foc.o                 [type] 1   [path] ..\bsp\bsp_foc.c
+[old name] bsp_adc.o                 [type] 1   [path] ..\bsp\bsp_adc.c
+[old name] bsp_pwm.o                 [type] 1   [path] ..\bsp\bsp_pwm.c
+[old name] bsp_key.o                 [type] 1   [path] ..\bsp\bsp_key.c
+[old name] bsp_uart.o                [type] 1   [path] ..\bsp\bsp_uart.c
 [old name] main.o                    [type] 1   [path] ..\src\main.c
 [old name] cpu.o                     [type] 1   [path] ..\cpu\cpu.c
 [old name] stm32h7xx_it.o            [type] 1   [path] ..\cpu\stm32h7xx_it.c
@@ -104,73 +127,91 @@
 [old name] stm32h7xx_hal_uart_ex.o   [type] 1   [path] ..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_uart_ex.c
 [old name] stm32h7xx_hal_adc.o       [type] 1   [path] ..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_adc.c
 [old name] stm32h7xx_hal_adc_ex.o    [type] 1   [path] ..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_adc_ex.c
-[old name] foc_port.o                [type] 1   [path] ..\bsp\motor\foc_port.c
-[old name] motor_adc.o               [type] 1   [path] ..\bsp\motor\motor_adc.c
-[old name] motor_pwm.o               [type] 1   [path] ..\bsp\motor\motor_pwm.c
-[old name] app_foc.o                 [type] 1   [path] ..\..\..\app\app_foc.c
 [old name] device.o                  [type] 1   [path] ..\..\..\components\fp-sdk\drivers\core\device.c
 [old name] driver.o                  [type] 1   [path] ..\..\..\components\fp-sdk\drivers\core\driver.c
 [old name] analog.o                  [type] 1   [path] ..\..\..\components\fp-sdk\drivers\device\analog.c
 [old name] pwmc.o                    [type] 1   [path] ..\..\..\components\fp-sdk\drivers\device\pwmc.c
+[old name] button.o                  [type] 1   [path] ..\..\..\components\fp-sdk\drivers\device\input\button.c
+[old name] dev_uart.o                [type] 1   [path] ..\..\..\components\fp-sdk\drivers\device\dev_uart.c
 [old name] pmsm_foc.o                [type] 1   [path] ..\..\..\components\fp-sdk\motion\foc\pmsm_foc.c
 [old name] foc_transform.o           [type] 1   [path] ..\..\..\components\fp-sdk\motion\foc\math\foc_transform.c
 [old name] foc_svpwm.o               [type] 1   [path] ..\..\..\components\fp-sdk\motion\foc\math\foc_svpwm.c
 [old name] foc_pi.o                  [type] 1   [path] ..\..\..\components\fp-sdk\motion\foc\control\foc_pi.c
 [old name] foc_profile.o             [type] 1   [path] ..\..\..\components\fp-sdk\motion\foc\profile\foc_profile.c
+[old name] heap.o                    [type] 1   [path] ..\..\..\components\fp-sdk\utilities\heap.c
+[old name] fplog.o                   [type] 1   [path] ..\..\..\components\fp-sdk\utilities\fplog.c
+[old name] pingpong.o                [type] 1   [path] ..\..\..\components\fp-sdk\utilities\pingpong.c
+[old name] soft_timer.o              [type] 1   [path] ..\..\..\components\fp-sdk\utilities\soft_timer.c
+[old name] message_bus.o             [type] 1   [path] ..\..\..\components\fp-sdk\utilities\message_bus\message_bus.c
+[old name] vofa.o                    [type] 1   [path] ..\..\..\components\fp-sdk\packages\vofa\vofa.c
 
 [record region info]
 [load region] LR_IROM1
-	[execution region] ER_IROM1, 0x08000000, 0x00200000, 0x0000CFD0 [type] 2 [ID] 4
-	[execution region] DEV_REGION, 0x20000000, 0x00000200, 0x00000060 [type] 1 [ID] 2
-	[execution region] DRV_REGION, 0x20000200, 0x00000200, 0x00000048 [type] 1 [ID] 2
-	[execution region] RW_DTCM, 0x20000400, 0x0001FC00, 0x000000F4 [type] 1 [ID] 2
-	[execution region] RW_AXI_SRAM, 0x24000000, 0x00080000, 0x00000940 [type] 1 [ID] 3
+	[execution region] ER_IROM1, 0x08000000, 0x00200000, 0x00014738 [type] 2 [ID] 4
+	[execution region] DEV_REGION, 0x20000000, 0x00000200, 0x000000C0 [type] 1 [ID] 2
+	[execution region] DRV_REGION, 0x20000200, 0x00000200, 0x00000090 [type] 1 [ID] 2
+	[execution region] RW_DTCM, 0x20000400, 0x0001FC00, 0x00000114 [type] 1 [ID] 2
+	[execution region] RW_AXI_SRAM, 0x24000000, 0x00080000, 0x00001DC0 [type] 1 [ID] 3
 	[execution region] RW_D2_DMA, 0x30000000, 0x00048000, 0x00000008 [type] 3 [ID] 1
 -----------------------------------------------------------------------------------------------------------------------------------------
                                       FILE(s)                                     |         RAM (byte)       |       FLASH (byte)       |
 -----------------------------------------------------------------------------------------------------------------------------------------
 ..\..\..\components\fp-sdk\drivers\device\analog.c():                             |          68              |         798              |
-..\..\..\app\app_foc.c():                                                         |         244              |         676              |
-..\cpu\cpu.c():                                                                   |          24              |         619              |
-..\..\..\components\fp-sdk\drivers\core\device.c():                               |           0              |         434              |
+..\..\..\app\app_foc.c():                                                         |         276              |        1222              |
+..\..\..\app\app_key.c():                                                         |          56              |         644              |
+..\..\..\app\app_msgbus.c():                                                      |          32              |         206              |
+..\bsp\bsp_adc.c():                                                               |         298              |         900              |
+..\bsp\bsp_foc.c():                                                               |         108              |        1256              |
+..\bsp\bsp_key.c():                                                               |         230              |         488              |
+..\bsp\bsp_pwm.c():                                                               |         244              |        1350              |
+..\bsp\bsp_uart.c():                                                              |         304              |        1090              |
+..\..\..\components\fp-sdk\drivers\device\input\button.c():                       |          84              |        1996              |
+..\cpu\cpu.c():                                                                   |          24              |         633              |
+..\..\..\components\fp-sdk\drivers\device\dev_uart.c():                           |          76              |        2300              |
+..\..\..\components\fp-sdk\drivers\core\device.c():                               |           0              |         434  [-70]       |
 ..\..\..\components\fp-sdk\drivers\core\driver.c():                               |           0              |         132              |
-..\..\..\components\fp-sdk\motion\foc\control\foc_pi.c():                         |           0              |         382              |
-..\bsp\motor\foc_port.c():                                                        |         144              |         516              |
-..\..\..\components\fp-sdk\motion\foc\profile\foc_profile.c():                    |           0              |         290              |
-..\..\..\components\fp-sdk\motion\foc\math\foc_svpwm.c():                         |           0              |         622              |
-..\..\..\components\fp-sdk\motion\foc\math\foc_transform.c():                     |           0              |         416              |
-..\src\main.c():                                                                  |           0              |          40              |
-..\bsp\motor\motor_adc.c():                                                       |         298              |         900              |
-..\bsp\motor\motor_pwm.c():                                                       |         244              |        1246              |
-..\..\..\components\fp-sdk\motion\foc\pmsm_foc.c():                               |           0              |         730              |
+..\..\..\components\fp-sdk\motion\foc\control\foc_pi.c():                         |           0              |         410              |
+..\..\..\components\fp-sdk\motion\foc\profile\foc_profile.c():                    |           0              |         182              |
+..\..\..\components\fp-sdk\motion\foc\math\foc_svpwm.c():                         |           0              |         820              |
+..\..\..\components\fp-sdk\motion\foc\math\foc_transform.c():                     |           0              |         396              |
+..\..\..\components\fp-sdk\utilities\fplog.c():                                   |         408              |         567              |
+..\..\..\components\fp-sdk\utilities\heap.c():                                    |        4120              |         866              |
+..\..\..\app\logic_key.c():                                                       |          44              |         466              |
+..\src\main.c():                                                                  |           0              |          88  [-28]       |
+..\..\..\components\fp-sdk\utilities\message_bus\message_bus.c():                 |           0              |        2070              |
+..\..\..\components\fp-sdk\utilities\pingpong.c():                                |           0              |         346              |
+..\..\..\components\fp-sdk\motion\foc\pmsm_foc.c():                               |           0              |        1066              |
 ..\..\..\components\fp-sdk\drivers\device\pwmc.c():                               |         108              |        2168              |
+..\..\..\components\fp-sdk\utilities\soft_timer.c():                              |          25              |        1024  [-176]      |
 ..\cpu\arm\startup_stm32h743xx.s():                                               |        1536              |         736              |
 ..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal.c():           |           9              |         347              |
 ..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_adc.c():       |           0              |        5708              |
 ..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_adc_ex.c():    |           0              |         982              |
-..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_cortex.c():    |           0              |         478              |
-..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_dma.c():       |           0              |       11422              |
-..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_gpio.c():      |           0              |        1048              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_cortex.c():    |           0              |         554              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_dma.c():       |           0              |       15552              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_gpio.c():      |           0              |        1676              |
 ..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_pwr_ex.c():    |           0              |         162              |
-..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_rcc.c():       |           0              |        4974              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_rcc.c():       |           0              |        5014              |
 ..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_rcc_ex.c():    |           0              |       10350              |
 ..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_tim.c():       |           0              |        3410              |
 ..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_tim_ex.c():    |           0              |        1088              |
-..\cpu\stm32h7xx_it.c():                                                          |           0              |          52              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_uart.c():      |           0              |        9528              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_uart_ex.c():   |           0              |         316              |
+..\cpu\stm32h7xx_it.c():                                                          |           0              |          58              |
 ..\..\..\lib\STMicroelectronics\stm32h7xx\arch\system_stm32h7xx.c():              |           8              |         422              |
 -----------------------------------------------------------------------------------------------------------------------------------------
 LR_IROM1
         SRAM 1               [0x20000000 | 0x00020000 (131072)]
-                DEV_REGION   [0x20000000]|¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö_________________________________________| (       96 /      512 )  18.8%  
-                DRV_REGION   [0x20000200]|¡ö¡ö¡ö¡ö¡ö¡ö¡ö___________________________________________| (       72 /      512 )  14.1%  
-                RW_DTCM      [0x20000400]|¡ö__________________________________________________| (      244 / 127.0 KB )   0.2%  
+                DEV_REGION   [0x20000000]|¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö________________________________| (      192 /      512 )  37.5%  
+                DRV_REGION   [0x20000200]|¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö____________________________________| (      144 /      512 )  28.1%  
+                RW_DTCM      [0x20000400]|¡ö__________________________________________________| (      276 / 127.0 KB )   0.2%  
  
         SRAM 2               [0x24000000 | 0x00080000 (524288)]
                 [zi start] 1   [zi end] 0
-                RW_AXI_SRAM  [0x24000000]|¡ö__________________________________________________| (   2.3 KB / 512.0 KB )   0.5%  
+                RW_AXI_SRAM  [0x24000000]|¡ö__________________________________________________| (   7.4 KB / 512.0 KB )   1.4%  [-64]
  
         FLASH 1              [0x08000000 | 0x00200000 (2097152)]
-                ER_IROM1     [0x08000000]|¡ö_________________________________________________| (  52.0 KB /  2.00 MB )   2.5%  
+                ER_IROM1     [0x08000000]|¡ö_________________________________________________| (  80.8 KB /  2.00 MB )   3.9%  [-1016]
  
         UNKNOWN
                 RW_D2_DMA    [0x30000000]|¡ö__________________________________________________| (        8 / 288.0 KB )   0.0%  
@@ -180,4 +221,4 @@ Maximum Stack Usage =        512 bytes + Unknown(Functions without stacksize, Cy
  
 =============================================================================================================================
 
-run time: 0.214 s
+run time: 0.300 s

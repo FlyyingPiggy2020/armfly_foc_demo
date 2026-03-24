@@ -22,53 +22,17 @@ Dialog DLL:      TCM.DLL V1.56.6.0
  
 <h2>Project:</h2>
 C:\Users\w1545\Desktop\Project\foc_pmsm_demo\armfly_foc_demo\board\armfly-v7\.mdk\mdk.uvprojx
-Project File Date:  03/19/2026
+Project File Date:  03/24/2026
 
 <h2>Output:</h2>
 *** Using Compiler 'V6.24', folder: 'C:\Users\w1545\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin'
-Rebuild target 'mdk'
+Build target 'mdk'
 Before Build - User command #1: python ..\..\..\fbtools.py before
 执行构建前操作...
 [OK] 构建前操作完成
 compiling main.c...
-assembling startup_stm32h743xx.s...
-compiling stm32h7xx_it.c...
-compiling system_stm32h7xx.c...
-compiling cpu.c...
-compiling stm32h7xx_hal_cortex.c...
-compiling stm32h7xx_hal.c...
-compiling stm32h7xx_hal_dma_ex.c...
-compiling stm32h7xx_hal_exti.c...
-compiling stm32h7xx_hal_dma.c...
-compiling stm32h7xx_hal_flash.c...
-compiling stm32h7xx_hal_flash_ex.c...
-compiling stm32h7xx_hal_gpio.c...
-compiling stm32h7xx_hal_mdma.c...
-compiling stm32h7xx_hal_pwr.c...
-compiling stm32h7xx_hal_pwr_ex.c...
-compiling stm32h7xx_hal_rcc.c...
-compiling stm32h7xx_hal_rcc_ex.c...
-compiling stm32h7xx_hal_tim_ex.c...
-compiling stm32h7xx_hal_uart.c...
-compiling stm32h7xx_hal_uart_ex.c...
-compiling stm32h7xx_hal_tim.c...
-compiling foc_port.c...
-compiling stm32h7xx_hal_adc_ex.c...
-compiling stm32h7xx_hal_adc.c...
-compiling driver.c...
-compiling app_foc.c...
-compiling device.c...
-compiling motor_pwm.c...
-compiling motor_adc.c...
-compiling analog.c...
-compiling pwmc.c...
-compiling foc_svpwm.c...
-compiling foc_transform.c...
-compiling pmsm_foc.c...
-compiling foc_pi.c...
-compiling foc_profile.c...
 linking...
-Program Size: Code=52304 RO-data=896 RW-data=560 ZI-data=2228  
+Program Size: Code=81512 RO-data=1240 RW-data=816 ZI-data=7356  
 FromELF: creating hex file...
 After Build - User command #1: python ..\..\..\fbtools.py after
 执行构建后操作...
@@ -84,46 +48,60 @@ After Build - User command #2: keil-build-viewer.exe
                                       FILE(s)                                     |         RAM (byte)       |       FLASH (byte)       |
 -----------------------------------------------------------------------------------------------------------------------------------------
 ..\..\..\components\fp-sdk\drivers\device\analog.c():                             |          68              |         798              |
-..\..\..\app\app_foc.c():                                                         |         244              |         676              |
-..\cpu\cpu.c():                                                                   |          24              |         619              |
-..\..\..\components\fp-sdk\drivers\core\device.c():                               |           0              |         434              |
+..\..\..\app\app_foc.c():                                                         |         276              |        1222              |
+..\..\..\app\app_key.c():                                                         |          56              |         644              |
+..\..\..\app\app_msgbus.c():                                                      |          32              |         206              |
+..\bsp\bsp_adc.c():                                                               |         298              |         900              |
+..\bsp\bsp_foc.c():                                                               |         108              |        1256              |
+..\bsp\bsp_key.c():                                                               |         230              |         488              |
+..\bsp\bsp_pwm.c():                                                               |         244              |        1350              |
+..\bsp\bsp_uart.c():                                                              |         304              |        1090              |
+..\..\..\components\fp-sdk\drivers\device\input\button.c():                       |          84              |        1996              |
+..\cpu\cpu.c():                                                                   |          24              |         633              |
+..\..\..\components\fp-sdk\drivers\device\dev_uart.c():                           |          76              |        2300              |
+..\..\..\components\fp-sdk\drivers\core\device.c():                               |           0              |         434  [-70]       |
 ..\..\..\components\fp-sdk\drivers\core\driver.c():                               |           0              |         132              |
-..\..\..\components\fp-sdk\motion\foc\control\foc_pi.c():                         |           0              |         382              |
-..\bsp\motor\foc_port.c():                                                        |         144              |         516              |
-..\..\..\components\fp-sdk\motion\foc\profile\foc_profile.c():                    |           0              |         290              |
-..\..\..\components\fp-sdk\motion\foc\math\foc_svpwm.c():                         |           0              |         622              |
-..\..\..\components\fp-sdk\motion\foc\math\foc_transform.c():                     |           0              |         416              |
-..\src\main.c():                                                                  |           0              |          40              |
-..\bsp\motor\motor_adc.c():                                                       |         298              |         900              |
-..\bsp\motor\motor_pwm.c():                                                       |         244              |        1246              |
-..\..\..\components\fp-sdk\motion\foc\pmsm_foc.c():                               |           0              |         730              |
+..\..\..\components\fp-sdk\motion\foc\control\foc_pi.c():                         |           0              |         410              |
+..\..\..\components\fp-sdk\motion\foc\profile\foc_profile.c():                    |           0              |         182              |
+..\..\..\components\fp-sdk\motion\foc\math\foc_svpwm.c():                         |           0              |         820              |
+..\..\..\components\fp-sdk\motion\foc\math\foc_transform.c():                     |           0              |         396              |
+..\..\..\components\fp-sdk\utilities\fplog.c():                                   |         408              |         567              |
+..\..\..\components\fp-sdk\utilities\heap.c():                                    |        4120              |         866              |
+..\..\..\app\logic_key.c():                                                       |          44              |         466              |
+..\src\main.c():                                                                  |           0              |          88  [-28]       |
+..\..\..\components\fp-sdk\utilities\message_bus\message_bus.c():                 |           0              |        2070              |
+..\..\..\components\fp-sdk\utilities\pingpong.c():                                |           0              |         346              |
+..\..\..\components\fp-sdk\motion\foc\pmsm_foc.c():                               |           0              |        1066              |
 ..\..\..\components\fp-sdk\drivers\device\pwmc.c():                               |         108              |        2168              |
+..\..\..\components\fp-sdk\utilities\soft_timer.c():                              |          25              |        1024  [-176]      |
 ..\cpu\arm\startup_stm32h743xx.s():                                               |        1536              |         736              |
 ..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal.c():           |           9              |         347              |
 ..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_adc.c():       |           0              |        5708              |
 ..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_adc_ex.c():    |           0              |         982              |
-..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_cortex.c():    |           0              |         478              |
-..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_dma.c():       |           0              |       11422              |
-..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_gpio.c():      |           0              |        1048              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_cortex.c():    |           0              |         554              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_dma.c():       |           0              |       15552              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_gpio.c():      |           0              |        1676              |
 ..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_pwr_ex.c():    |           0              |         162              |
-..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_rcc.c():       |           0              |        4974              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_rcc.c():       |           0              |        5014              |
 ..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_rcc_ex.c():    |           0              |       10350              |
 ..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_tim.c():       |           0              |        3410              |
 ..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_tim_ex.c():    |           0              |        1088              |
-..\cpu\stm32h7xx_it.c():                                                          |           0              |          52              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_uart.c():      |           0              |        9528              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_uart_ex.c():   |           0              |         316              |
+..\cpu\stm32h7xx_it.c():                                                          |           0              |          58              |
 ..\..\..\lib\STMicroelectronics\stm32h7xx\arch\system_stm32h7xx.c():              |           8              |         422              |
 -----------------------------------------------------------------------------------------------------------------------------------------
 LR_IROM1
         SRAM 1               [0x20000000 | 0x00020000 (131072)]
-                DEV_REGION   [0x20000000]|■■■■■■■■■_________________________________________| (       96 /      512 )  18.8%  
-                DRV_REGION   [0x20000200]|■■■■■■■___________________________________________| (       72 /      512 )  14.1%  
-                RW_DTCM      [0x20000400]|■__________________________________________________| (      244 / 127.0 KB )   0.2%  
+                DEV_REGION   [0x20000000]|■■■■■■■■■■■■■■■■■■________________________________| (      192 /      512 )  37.5%  
+                DRV_REGION   [0x20000200]|■■■■■■■■■■■■■■____________________________________| (      144 /      512 )  28.1%  
+                RW_DTCM      [0x20000400]|■__________________________________________________| (      276 / 127.0 KB )   0.2%  
  
         SRAM 2               [0x24000000 | 0x00080000 (524288)]
-                RW_AXI_SRAM  [0x24000000]|■__________________________________________________| (   2.3 KB / 512.0 KB )   0.5%  
+                RW_AXI_SRAM  [0x24000000]|■__________________________________________________| (   7.4 KB / 512.0 KB )   1.4%  [-64]
  
         FLASH 1              [0x08000000 | 0x00200000 (2097152)]
-                ER_IROM1     [0x08000000]|■_________________________________________________| (  52.0 KB /  2.00 MB )   2.5%  
+                ER_IROM1     [0x08000000]|■_________________________________________________| (  80.8 KB /  2.00 MB )   3.9%  [-1016]
  
         UNKNOWN
                 RW_D2_DMA    [0x30000000]|■__________________________________________________| (        8 / 288.0 KB )   0.0%  
@@ -143,7 +121,7 @@ Package Vendor: Keil
 <h2>Collection of Component include folders:</h2>
 
 <h2>Collection of Component Files used:</h2>
-Build Time Elapsed:  00:00:06
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>

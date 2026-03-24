@@ -126,6 +126,20 @@ typedef struct {
 - 函数与段落之间空 1 行，避免连续超过 1 个空行
 - 新增文件默认使用 ASCII；注释和必要文档允许使用 UTF-8 中文
 
+### 4.1 PowerShell 编码约定
+
+- 使用 PowerShell 读取、搜索、打印包含中文的源码或文档时，默认不要依赖终端当前编码
+- `Get-Content`、`Set-Content`、`Select-String` 等命令需要显式指定 `-Encoding utf8`
+- 需要验证终端输出内容时，应先显式设置：
+
+```powershell
+[Console]::InputEncoding = [System.Text.UTF8Encoding]::new($false)
+[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+$OutputEncoding = [Console]::OutputEncoding
+```
+
+- 向用户反馈“文件乱码”前，先用显式 UTF-8 方式重新读取验证，避免把终端编码问题误判为文件编码问题
+
 ## 5. FOC 模块分层规范
 
 ### 5.1 目录职责
@@ -148,6 +162,47 @@ typedef struct {
 - 设计时必须保留后续切换定点实现的兼容边界
 - 角度、标量、坐标系类型应统一封装，避免在业务层直接散落 `float` 细节
 - 不允许在上层控制流程中直接写死 `sinf`、`cosf`、SVPWM 常数等实现细节
+
+## 5.4 BSP 中间层规范
+
+- `board/<board-name>/bsp/` 下只放中间层移植文件，不再额外拆 `motor/`、`key/`、`port/` 等子目录
+- BSP 中间层文件命名统一使用 `bsp_xxx.c` 风格，例如 `bsp_foc.c`、`bsp_adc.c`、`bsp_pwm.c`、`bsp_key.c`
+- 只有确实需要提供给 `app/` 或其他模块调用的接口，才保留对应头文件，例如 `bsp_foc.h`、`bsp_key.h`
+- 纯内部移植实现默认不单独创建 `.h` 文件，避免为单个 `.c` 文件再做一层无意义暴露
+- `app/` 层只能包含必要的 BSP 对外头文件，不直接依赖具体子目录路径约定
+- BSP 中间层负责板级 GPIO、PWM、ADC、按键等硬件落地，不承载通用算法和业务编排
+
+## 5.5 BSP 按键约定
+
+- 按键驱动的通用逻辑放在 `components/fp-sdk/drivers/device/input/button.*`
+- 板级按键移植放在 `board/<board-name>/bsp/bsp_key.c`
+- `app_key.c` 负责按键初始化、周期扫描调度、事件读取和业务分发
+- `bsp_key.c` 负责具体引脚初始化、按键有效电平判断、组合键判定和设备注册
+- 在未明确需要前，不额外抽象 `pin` 驱动，按键移植层可以直接使用 HAL GPIO 读取
+
+## 5.6 MDK 工程目录映射
+
+- BSP 中间层源码在 MDK 工程中统一放到 `bsp` 分组
+- `board/<board-name>/bsp/` 下的源文件在 `.uvprojx` 中直接使用 `..\bsp\xxx.c` 路径
+- 不再为 BSP 中间层单独创建 `bsp/motor`、`bsp/key`、`port/key` 之类的 MDK 分组
+- include path 优先指向 `..\bsp` 根目录，由 BSP 对外头文件控制可见边界
+
+## 6. 驱动目录分层补充
+
+### 6.1 drivers 目录职责
+
+- `components/fp-sdk/drivers/core/`：设备框架和驱动框架基础设施
+- `components/fp-sdk/drivers/device/bus/`：总线类基础驱动，例如 `i2c_bus`
+- `components/fp-sdk/drivers/device/input/`：输入类设备驱动，例如 `button`
+- `components/fp-sdk/drivers/device/storage/`：存储类设备驱动，例如 `at24cxx`
+- `components/fp-sdk/drivers/device/sensor/`：传感器类设备驱动，例如 `paj7620`
+- 其他仍属于设备层的驱动，继续放在 `components/fp-sdk/drivers/device/` 根目录
+
+### 6.2 drivers 分层原则
+
+- 总线基础能力和上层器件驱动要分层表达，不再混放为同一语义层
+- 器件驱动可以依赖总线驱动，但应用层不直接承担总线细节
+- 目录结构要能直接表达依赖方向：`core -> device/bus -> device/<category> -> app/board`
 
 ## 6. 协议模块独立化规范
 

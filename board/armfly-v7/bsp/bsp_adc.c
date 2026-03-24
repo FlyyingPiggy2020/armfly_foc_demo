@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2026 by Lu Xianfan.
- * @FilePath     : motor_adc.c
+ * @FilePath     : board/armfly-v7/bsp/bsp_adc.c
  * @Author       : Codex
  * @Date         : 2026-03-18 13:20:00
  * @LastEditors  : lxf_zjnb@qq.com

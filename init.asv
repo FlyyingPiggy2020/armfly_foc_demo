@@ -1,0 +1,41 @@
+% 电机参数
+np = 7;
+rs_ohm_real = 5.1;
+ld_h_real = 2.8e-3;
+lq_h_real = 2.8e-3;
+flux_linkage_wb_real = 1.79e-3;
+vdc_v_real = 12.0;
+i_max_a_real = 1; %最大量程的电流(留一定余量)
+rpm = 2700;%电机转速
+fn = rpm/60*np;%电频率
+
+switch_freq_hz_real = 8e3;%开关频率
+ts = 1/switch_freq_hz_real;%采样周期
+current_wc_real = (switch_freq_hz_real/40)*2*pi;%电流环设计带宽
+
+
+% 基准量选择电压、电流、电角速度
+v_base = vdc_v_real/sqrt(3);%v
+i_base = i_max_a_real;%A
+inv_v_base = 1/v_base;
+inv_i_base = 1/i_base;
+omega_base = 2*pi*fn;%rad/s
+ts_base = 1/omega_base;%s
+
+% 电阻、电感通过推导获得
+r_base = v_base/i_base;
+l_base = r_base/(omega_base);
+phi_base = v_base/omega_base;
+
+% 电机参数归一化
+r_pu = rs_ohm_real/r_base;
+ld_pu = ld_h_real/l_base;
+lq_pu = lq_h_real/l_base;
+phi_pu = flux_linkage_wb_real/phi_base;
+
+current_wc_pu = current_wc_real/omega_base;
+ts_pu = ts/ts_base;
+id_kp_pu = ld_pu * current_wc_pu;
+id_ki_pu = r_pu * current_wc_pu * ts_pu;
+iq_kp_pu = lq_pu * current_wc_pu;
+iq_ki_pu = r_pu * current_wc_pu * ts_pu;
