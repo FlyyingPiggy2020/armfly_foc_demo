@@ -142,26 +142,27 @@ bool app_foc_init(void)
         g_app_foc.foc_service = NULL;
         return false;
     }
-
+    pmsm_foc_start(&g_app_foc.foc, FOC_MODE_SPEED);
+    g_app_foc.speed_ref = 0;
     g_app_foc.is_started = false;
-    g_app_foc.speed_ref = APP_FOC_DEFAULT_SPEED_REF;
+    
 
     return true;
 }
 
 void app_foc_toggle_enable(void)
 {
-    if (!g_app_foc.is_started) {
-        pmsm_foc_start(&g_app_foc.foc, FOC_MODE_SPEED);
-        g_app_foc.is_started = true;
-        _app_foc_apply_speed_ref();
-        xlog_count("app_foc: start speed_ref=%.1f\r\n", (double)g_app_foc.speed_ref);
-        return;
-    }
+//    if (!g_app_foc.is_started) {
+//        pmsm_foc_start(&g_app_foc.foc, FOC_MODE_SPEED);
+//        g_app_foc.is_started = true;
+//        _app_foc_apply_speed_ref();
+//        xlog_count("app_foc: start speed_ref=%.1f\r\n", (double)g_app_foc.speed_ref);
+//        return;
+//    }
 
-    pmsm_foc_stop(&g_app_foc.foc);
-    g_app_foc.is_started = false;
-    xlog_count("app_foc: stop\r\n");
+//    pmsm_foc_stop(&g_app_foc.foc);
+//    g_app_foc.is_started = false;
+//    xlog_count("app_foc: stop\r\n");
 }
 
 void app_foc_speed_up(void)

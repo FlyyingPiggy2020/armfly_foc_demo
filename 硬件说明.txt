@@ -78,4 +78,12 @@ ISDC ISA ISB ISC VDA
 
 采样周期的选择：因为PWM的开关周期为8K，所以不能太长，不然的话偏移000点。
 
+3.4角度读取
+SPI接口
+CS PG10
+DATA/MOSI PB5
+SCK PB3
+
+笔者磁编是TLE5012B，不是标准的SPI，它的MOSI和MISO用的同一根线。。
+需要配置为开漏模式，然后用这根线输入输出。。
 

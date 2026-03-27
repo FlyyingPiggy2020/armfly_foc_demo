@@ -13,6 +13,7 @@
 #include "app_foc.h"
 #include "app_key.h"
 #include "app_msgbus.h"
+#include "bsp_encoder.h"
 #include "logic_debug.h"
 #include "logic_key.h"
 #include "options.h"
@@ -53,11 +54,15 @@ int main(void)
         }
     }
 
-//    if (!app_comm_init()) {
-//        xlog_count("main: app_comm_init failed\r\n");
-//        while (1) {
-//        }
-//    }
+    if (!app_comm_init()) {
+        xlog_count("main: app_comm_init failed\r\n");
+        while (1) {
+        }
+    }
+
+    if (bsp_encoder_init() != E_OK) {
+        xlog_count("main: bsp_encoder_init failed, use fallback angle\r\n");
+    }
 
     if (!logic_key_init()) {
         xlog_count("main: logic_key_init failed\r\n");
@@ -65,15 +70,15 @@ int main(void)
         }
     }
 
-//    if (!logic_debug_init()) {
-//        xlog_count("main: logic_debug_init failed\r\n");
-//        while (1) {
-//        }
-//    }
+    if (!logic_debug_init()) {
+        xlog_count("main: logic_debug_init failed\r\n");
+        while (1) {
+        }
+    }
 
     while (1) {
         app_key_process();
-//        app_comm_process();
+        app_comm_process();
         fp_timer_handler();
     }
 }

@@ -10,6 +10,8 @@
 
 /*---------- includes ----------*/
 #include "options.h"
+#include "cpu.h"
+#include "bsp_encoder.h"
 #include "bsp_foc.h"
 #include "analog.h"
 #include "pmsm_foc.h"
@@ -36,6 +38,7 @@ static power_stage_profile_t g_power_stage_profile = {
     .over_current_limit = 15.0f,
 };
 static sensor_profile_t g_sensor_profile = {
+    .encoder_cpr = 32768U,
     .encoder_direction = 1,
 };
 static foc_ctrl_cfg_t g_ctrl_cfg = {
@@ -43,7 +46,7 @@ static foc_ctrl_cfg_t g_ctrl_cfg = {
     .id_ki_pu = 0.1156f,
     .iq_kp_pu = 0.5079f,
     .iq_ki_pu = 0.1156f,
-    .voltage_limit_pu = 1.0f, // 电压限幅_PU值
+    .voltage_limit_pu = 0.95f, // 电压限幅_PU值(需要给采样留时间，所以不能全功率1.0输出)
     .current_loop_hz = 200,
     .speed_loop_hz = 20,
 };
@@ -132,19 +135,21 @@ static void _foc_port_read_current_loop_sample(void *user_data, foc_current_loop
     sample->a_real = (foc_scalar_t)(a_adc - 32767.0f) * 5.0354772e-5;
     sample->b_real = (foc_scalar_t)(b_adc - 32767.0f) * 5.0354772e-5;
     sample->bus_voltage = 12.0f;
+    sample->sample_tick_us = (uint32_t)(tick_get_from_isr() * 1000ULL);
+
 }
 
 static void _foc_port_get_electrical_angle(void *user_data, uint32_t target_tick_us, foc_angle_sample_t *sample)
 {
-    (void)user_data;
-    (void)target_tick_us;
+    static float angle = 0;
 
     if (sample == NULL) {
         return;
     }
+    (void)user_data;
 
-    *sample = (foc_angle_sample_t){ 0 };
-    sample->status = FOC_ANGLE_STATUS_NONE;
+    /* 电流环在消费点实时拉取磁编角度，读取失败时再退回调试兜底角度。 */
+    bsp_encoder_get_angle_sample(target_tick_us, sample);
 }
 
 static void _foc_port_write_pwm_duty(void *user_data, const foc_pwm_duty_t *duty)
@@ -188,9 +193,11 @@ bool foc_port_init(void)
     if ((g_foc_port_ctx.current_dev != NULL) && (g_foc_port_ctx.pwm_dev != NULL)) {
         return true;
     }
-
-    g_foc_port_ctx.current_dev = (device_t *)device_open("motor_adc");
+    
+    // 必须先打开定时器，再初始化ADC；因为ADC的采样源触发源是定时器的事件，如果先后顺序搞反，则无法进行ADC采集
     g_foc_port_ctx.pwm_dev = (device_t *)device_open("motor_pwm");
+    g_foc_port_ctx.current_dev = (device_t *)device_open("motor_adc");
+
     if ((g_foc_port_ctx.current_dev == NULL) || (g_foc_port_ctx.pwm_dev == NULL)) {
         xlog_count("foc_port_init: open device failed adc=%p pwm=%p\r\n",
                    g_foc_port_ctx.current_dev,

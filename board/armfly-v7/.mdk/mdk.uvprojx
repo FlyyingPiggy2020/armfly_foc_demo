@@ -314,7 +314,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>4</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -340,7 +340,7 @@
               <MiscControls>-std=c11</MiscControls>
               <Define>USE_HAL_DRIVER,STM32H743xx,FP_INCLDUE_BOARD_OPTIONS_FILE,FOC_OPTIONS_FILE,CONFIG_HEAP_TYPE=1,FOC_INCLDUE_BOARD_OPTIONS_FILE</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\app;..\src;..\cpu\inc;..\config;..\bsp;..\..\..\components\fp-sdk\inc;..\..\..\components\fp-sdk\drivers\core;..\..\..\components\fp-sdk\drivers\bus;..\..\..\components\fp-sdk\drivers\device;..\..\..\components\fp-sdk\drivers\device\input;..\..\..\components\fp-sdk\drivers\device\storage;..\..\..\components\fp-sdk\drivers\device\sensor;..\..\..\components\fp-sdk\packages;..\..\..\components\fp-sdk\utilities;..\..\..\components\fp-sdk\utilities\message_bus;..\..\..\components\fp-sdk\motion\foc;..\..\..\components\fp-sdk\motion\foc\math;..\..\..\components\fp-sdk\motion\foc\control;..\..\..\components\fp-sdk\motion\foc\profile;..\..\..\lib\STMicroelectronics\stm32h7xx\arch\inc;..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\inc;..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\inc\Legacy</IncludePath>
+              <IncludePath>..\..\..\app;..\src;..\cpu\inc;..\config;..\bsp;..\..\..\components\fp-sdk\inc;..\..\..\components\fp-sdk\drivers\core;..\..\..\components\fp-sdk\drivers\device\bus;..\..\..\components\fp-sdk\drivers\device;..\..\..\components\fp-sdk\drivers\device\input;..\..\..\components\fp-sdk\drivers\device\storage;..\..\..\components\fp-sdk\drivers\device\sensor;..\..\..\components\fp-sdk\packages;..\..\..\components\fp-sdk\utilities;..\..\..\components\fp-sdk\utilities\message_bus;..\..\..\components\fp-sdk\motion\foc;..\..\..\components\fp-sdk\motion\foc\math;..\..\..\components\fp-sdk\motion\foc\control;..\..\..\components\fp-sdk\motion\foc\profile;..\..\..\lib\STMicroelectronics\stm32h7xx\arch\inc;..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\inc;..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\inc\Legacy</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -388,57 +388,6 @@
               <FileName>app_comm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\app\app_comm.c</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>2</AlwaysBuild>
-                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
-                  <PublicsOnly>2</PublicsOnly>
-                  <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
-                <FileArmAds>
-                  <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
-                    <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
             </File>
             <File>
               <FileName>app_foc.c</FileName>
@@ -464,57 +413,6 @@
               <FileName>logic_debug.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\app\logic_debug.c</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>2</AlwaysBuild>
-                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
-                  <PublicsOnly>2</PublicsOnly>
-                  <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
-                <FileArmAds>
-                  <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
-                    <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
             </File>
             <File>
               <FileName>app_msgbus.c</FileName>
@@ -550,6 +448,16 @@
               <FileName>bsp_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\bsp\bsp_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\bsp\bsp_spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_encoder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\bsp\bsp_encoder.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -707,6 +615,11 @@
               <FilePath>..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_uart_ex.c</FilePath>
             </File>
             <File>
+              <FileName>stm32h7xx_hal_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_spi.c</FilePath>
+            </File>
+            <File>
               <FileName>stm32h7xx_hal_adc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_adc.c</FilePath>
@@ -755,6 +668,11 @@
               <FileName>dev_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\fp-sdk\drivers\device\dev_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi_bus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\drivers\device\bus\spi_bus.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -820,6 +738,11 @@
               <FileName>vofa.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\fp-sdk\packages\vofa\vofa.c</FilePath>
+            </File>
+            <File>
+              <FileName>tle5012b_sensor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\packages\tle5012b\tle5012b_sensor.c</FilePath>
             </File>
           </Files>
         </Group>

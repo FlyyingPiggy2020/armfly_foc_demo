@@ -28,6 +28,8 @@ static uint8_t uuid[CONFIG_CHIP_UUID_SIZE] = { 0 };
 
 static volatile uint64_t s_ticks = 0;
 static volatile uint32_t s_critical_depth = 0;
+static volatile uint32_t s_delay_count = 0;
+static volatile uint8_t s_timeout_flag = 0;
 /*---------- function prototype ----------*/
 static void SystemClock_Config(void);
 static void _cpu_error_handler(void);
@@ -92,23 +94,66 @@ void cpu_get_uuid(uint8_t *pbuf, uint8_t len)
 
 void udelay(uint32_t us)
 {
-    volatile uint32_t index = us * 32U;
+    uint32_t ticks = 0U;
+    uint32_t told = 0U;
+    uint32_t tnow = 0U;
+    uint32_t tcnt = 0U;
+    uint32_t reload = 0U;
 
-    while (index--) {
-        __NOP();
+    if (us == 0U) {
+        return;
+    }
+
+    reload = SysTick->LOAD;
+    ticks = us * (SystemCoreClock / 1000000U);
+    told = SysTick->VAL;
+
+    while (1) {
+        tnow = SysTick->VAL;
+        if (tnow != told) {
+            if (tnow < told) {
+                tcnt += told - tnow;
+            } else {
+                tcnt += reload - tnow + told;
+            }
+            told = tnow;
+
+            if (tcnt >= ticks) {
+                break;
+            }
+        }
     }
 }
 
 void mdelay(uint32_t ms)
 {
-    while (ms--) {
-        udelay(1000U);
+    if (ms == 0U) {
+        return;
+    } else if (ms == 1U) {
+        ms = 2U;
+    }
+
+    disable_irq();
+    s_delay_count = ms;
+    s_timeout_flag = 0U;
+    enable_irq();
+
+    while (1) {
+        if (s_timeout_flag == 1U) {
+            break;
+        }
     }
 }
 
 void tick_inc(void)
 {
     s_ticks++;
+
+    if (s_delay_count > 0U) {
+        if (--s_delay_count == 0U) {
+            s_timeout_flag = 1U;
+        }
+    }
 }
 
 uint64_t tick_get(void)
