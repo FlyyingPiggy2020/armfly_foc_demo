@@ -1,0 +1,8 @@
+{
+    "keil_path": "C:\\Users\\w1545\\AppData\\Local\\Keil_v5\\UV4\\UV4.exe",
+    "project": "board/armfly-v7/.mdk/mdk.uvprojx",
+    "log_dir": "build",
+    "before": "python fbtools.py before",
+    "after": "python fbtools.py after",
+    "prefer_wrapper": true
+}

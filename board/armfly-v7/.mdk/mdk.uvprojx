@@ -70,9 +70,9 @@
             <nStopU2X>0</nStopU2X>
           </BeforeCompile>
           <BeforeMake>
-            <RunUserProg1>0</RunUserProg1>
+            <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
+            <UserProg1Name>python ..\..\..\fbtools.py before</UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -80,10 +80,10 @@
             <nStopB2X>0</nStopB2X>
           </BeforeMake>
           <AfterMake>
-            <RunUserProg1>0</RunUserProg1>
-            <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <RunUserProg1>1</RunUserProg1>
+            <RunUserProg2>1</RunUserProg2>
+            <UserProg1Name>python ..\..\..\fbtools.py after</UserProg1Name>
+            <UserProg2Name>keil-build-viewer.exe</UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopA1X>0</nStopA1X>
@@ -314,14 +314,14 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>2</Optim>
+            <Optim>4</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
             <Strict>0</Strict>
             <EnumInt>0</EnumInt>
             <PlainCh>0</PlainCh>
-            <Ropi>0</Ropi>
+            <Ropi>1</Ropi>
             <Rwpi>0</Rwpi>
             <wLevel>3</wLevel>
             <uThumb>0</uThumb>
@@ -338,9 +338,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>-std=c11</MiscControls>
-              <Define>USE_HAL_DRIVER,STM32H743xx,FP_INCLDUE_BOARD_OPTIONS_FILE</Define>
+              <Define>USE_HAL_DRIVER,STM32H743xx,FP_INCLDUE_BOARD_OPTIONS_FILE,FOC_OPTIONS_FILE,CONFIG_HEAP_TYPE=1,FOC_INCLDUE_BOARD_OPTIONS_FILE</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\app;..\src;..\cpu\inc;..\config;..\..\..\components\fp-sdk\inc;..\..\..\components\fp-sdk\drivers\core;..\..\..\components\fp-sdk\drivers\device;..\..\..\components\fp-sdk\packages;..\..\..\components\fp-sdk\utilities;..\..\..\lib\STMicroelectronics\stm32h7xx\arch\inc;..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\inc;..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\inc\Legacy</IncludePath>
+              <IncludePath>..\..\..\app;..\src;..\cpu\inc;..\config;..\bsp;..\..\..\components\fp-sdk\inc;..\..\..\components\fp-sdk\drivers\core;..\..\..\components\fp-sdk\drivers\device\bus;..\..\..\components\fp-sdk\drivers\device;..\..\..\components\fp-sdk\drivers\device\input;..\..\..\components\fp-sdk\drivers\device\storage;..\..\..\components\fp-sdk\drivers\device\sensor;..\..\..\components\fp-sdk\packages;..\..\..\components\fp-sdk\utilities;..\..\..\components\fp-sdk\utilities\message_bus;..\..\..\components\fp-sdk\motion\foc;..\..\..\components\fp-sdk\motion\foc\math;..\..\..\components\fp-sdk\motion\foc\control;..\..\..\components\fp-sdk\motion\foc\profile;..\..\..\lib\STMicroelectronics\stm32h7xx\arch\inc;..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\inc;..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\inc\Legacy</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -381,6 +381,91 @@
         </TargetArmAds>
       </TargetOption>
       <Groups>
+        <Group>
+          <GroupName>app</GroupName>
+          <Files>
+            <File>
+              <FileName>app_comm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\app\app_comm.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_foc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\app\app_foc.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\app\app_key.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>app_msgbus</GroupName>
+          <Files>
+            <File>
+              <FileName>logic_key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\app\logic_key.c</FilePath>
+            </File>
+            <File>
+              <FileName>logic_debug.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\app\logic_debug.c</FilePath>
+            </File>
+            <File>
+              <FileName>logic_foc_calibration.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\app\logic_foc_calibration.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_msgbus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\app\app_msgbus.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>bsp</GroupName>
+          <Files>
+            <File>
+              <FileName>bsp_foc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\bsp\bsp_foc.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\bsp\bsp_adc.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\bsp\bsp_pwm.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\bsp\bsp_key.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\bsp\bsp_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\bsp\bsp_spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_encoder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\bsp\bsp_encoder.c</FilePath>
+            </File>
+          </Files>
+        </Group>
         <Group>
           <GroupName>board/src</GroupName>
           <Files>
@@ -533,6 +618,136 @@
               <FileName>stm32h7xx_hal_uart_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_uart_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32h7xx_hal_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32h7xx_hal_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_adc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32h7xx_hal_adc_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_adc_ex.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>fp-sdk/core</GroupName>
+          <Files>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\drivers\core\device.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\drivers\core\driver.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>fp-sdk/device</GroupName>
+          <Files>
+            <File>
+              <FileName>analog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\drivers\device\analog.c</FilePath>
+            </File>
+            <File>
+              <FileName>pwmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\drivers\device\pwmc.c</FilePath>
+            </File>
+            <File>
+              <FileName>button.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\drivers\device\input\button.c</FilePath>
+            </File>
+            <File>
+              <FileName>dev_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\drivers\device\dev_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi_bus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\drivers\device\bus\spi_bus.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>fp-sdk/motion/foc</GroupName>
+          <Files>
+            <File>
+              <FileName>pmsm_foc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\motion\foc\pmsm_foc.c</FilePath>
+            </File>
+            <File>
+              <FileName>foc_transform.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\motion\foc\math\foc_transform.c</FilePath>
+            </File>
+            <File>
+              <FileName>foc_svpwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\motion\foc\math\foc_svpwm.c</FilePath>
+            </File>
+            <File>
+              <FileName>foc_pi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\motion\foc\control\foc_pi.c</FilePath>
+            </File>
+            <File>
+              <FileName>foc_profile.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\motion\foc\profile\foc_profile.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>fp-sdk/utilities</GroupName>
+          <Files>
+            <File>
+              <FileName>heap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\utilities\heap.c</FilePath>
+            </File>
+            <File>
+              <FileName>fplog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\utilities\fplog.c</FilePath>
+            </File>
+            <File>
+              <FileName>pingpong.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\utilities\pingpong.c</FilePath>
+            </File>
+            <File>
+              <FileName>soft_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\utilities\soft_timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>message_bus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\utilities\message_bus\message_bus.c</FilePath>
+            </File>
+            <File>
+              <FileName>vofa.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\packages\vofa\vofa.c</FilePath>
+            </File>
+            <File>
+              <FileName>tle5012b_sensor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\packages\tle5012b\tle5012b_sensor.c</FilePath>
             </File>
           </Files>
         </Group>

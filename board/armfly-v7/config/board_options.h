@@ -28,6 +28,17 @@ extern "C" {
 #define __ticks2ms(ticks)           (ticks)
 #define __ms2ticks(ms)              (ms)
 
+#ifndef ASSERT
+#define ASSERT(expr)                                      \
+    do {                                                  \
+        if (!(expr)) {                                    \
+            xlog_cout("ASSERT in %s:%d\r\n", __FILE__, __LINE__); \
+            while (1) {                                   \
+            }                                             \
+        }                                                 \
+    } while (0)
+#endif
+
 //-------- <<< Use Configuration Wizard in Context Menu >>> -----------------
 //
 // <h> FP-SDK功能配置

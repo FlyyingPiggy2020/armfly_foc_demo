@@ -1,27 +1,99 @@
 *** Using Compiler 'V6.24', folder: 'C:\Users\w1545\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin'
 Build target 'mdk'
-compiling cpu.c...
-compiling system_stm32h7xx.c...
-compiling stm32h7xx_it.c...
-compiling stm32h7xx_hal_cortex.c...
-compiling stm32h7xx_hal.c...
-compiling stm32h7xx_hal_dma_ex.c...
-compiling stm32h7xx_hal_dma.c...
-compiling stm32h7xx_hal_exti.c...
-compiling stm32h7xx_hal_pwr.c...
-compiling stm32h7xx_hal_gpio.c...
-compiling stm32h7xx_hal_flash.c...
-compiling stm32h7xx_hal_flash_ex.c...
-compiling stm32h7xx_hal_mdma.c...
-compiling stm32h7xx_hal_pwr_ex.c...
-compiling stm32h7xx_hal_rcc.c...
-compiling stm32h7xx_hal_uart_ex.c...
-compiling stm32h7xx_hal_rcc_ex.c...
-compiling stm32h7xx_hal_tim_ex.c...
-compiling stm32h7xx_hal_uart.c...
-compiling stm32h7xx_hal_tim.c...
+Before Build - User command #1: python ..\..\..\fbtools.py before
+执行构建前操作...
+[OK] 构建前操作完成
+compiling pmsm_foc.c...
 linking...
-Program Size: Code=796 RO-data=96 RW-data=4 ZI-data=4212  
+Program Size: Code=60594 RO-data=1230 RW-data=920 ZI-data=7656  
 FromELF: creating hex file...
+After Build - User command #1: python ..\..\..\fbtools.py after
+执行构建后操作...
+
+Generating compile_commands.json...
+Successfully generated compile_commands.json to C:\Users\w1545\Desktop\Project\foc_pmsm_demo\armfly_foc_demo\build\compile_commands.json
+[OK] compile_commands.json generated successfully!
+[OK] 构建后操作完成
+After Build - User command #2: keil-build-viewer.exe
+
+=================================================== keil-build-viewer v1.2 ==================================================
+
+[mdk.uvprojx]  [mdk]  [STM32H743XIHx]
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+                                      FILE(s)                                     |         RAM (byte)       |       FLASH (byte)       |
+-----------------------------------------------------------------------------------------------------------------------------------------
+..\..\..\components\fp-sdk\drivers\device\analog.c():                             |          68              |         478              |
+..\..\..\app\app_comm.c():                                                        |           8              |         138              |
+..\..\..\app\app_foc.c():                                                         |         284              |         910              |
+..\..\..\app\app_key.c():                                                         |          56              |         330              |
+..\..\..\app\app_msgbus.c():                                                      |          32              |          74              |
+..\bsp\bsp_adc.c():                                                               |         298              |         756              |
+..\bsp\bsp_encoder.c():                                                           |          12              |         324              |
+..\bsp\bsp_foc.c():                                                               |         104              |         952              |
+..\bsp\bsp_key.c():                                                               |         232              |         408              |
+..\bsp\bsp_pwm.c():                                                               |         244              |        1028              |
+..\bsp\bsp_spi.c():                                                               |         248              |        1410              |
+..\bsp\bsp_uart.c():                                                              |         304              |         820              |
+..\..\..\components\fp-sdk\drivers\device\input\button.c():                       |          84              |        1530              |
+..\cpu\cpu.c():                                                                   |          24              |         531              |
+..\..\..\components\fp-sdk\drivers\device\dev_uart.c():                           |          76              |        1618              |
+..\..\..\components\fp-sdk\drivers\core\device.c():                               |           0              |         292              |
+..\..\..\components\fp-sdk\drivers\core\driver.c():                               |           0              |         108              |
+..\..\..\components\fp-sdk\motion\foc\control\foc_pi.c():                         |           0              |         186              |
+..\..\..\components\fp-sdk\motion\foc\profile\foc_profile.c():                    |           0              |          84              |
+..\..\..\components\fp-sdk\motion\foc\math\foc_svpwm.c():                         |           0              |         476              |
+..\..\..\components\fp-sdk\motion\foc\math\foc_transform.c():                     |           0              |         104              |
+..\..\..\components\fp-sdk\utilities\fplog.c():                                   |         408              |         310              |
+..\..\..\components\fp-sdk\utilities\heap.c():                                    |        4120              |         606              |
+..\..\..\app\logic_debug.c():                                                     |          12              |         162              |
+..\..\..\app\logic_foc_calibration.c():                                           |          40              |         720              |
+..\..\..\app\logic_key.c():                                                       |          44              |         376              |
+..\src\main.c():                                                                  |           0              |         114              |
+..\..\..\components\fp-sdk\utilities\message_bus\message_bus.c():                 |           0              |        1096              |
+..\..\..\components\fp-sdk\utilities\pingpong.c():                                |           0              |         188              |
+..\..\..\components\fp-sdk\motion\foc\pmsm_foc.c():                               |           0              |        1262  [+60]       |
+..\..\..\components\fp-sdk\drivers\device\pwmc.c():                               |         108              |        3408              |
+..\..\..\components\fp-sdk\utilities\soft_timer.c():                              |          28              |         690              |
+..\..\..\components\fp-sdk\drivers\device\bus\spi_bus.c():                        |          44              |        1064              |
+..\cpu\arm\startup_stm32h743xx.s():                                               |        1536              |         736              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal.c():           |          12              |         264              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_adc.c():       |           0              |        2854              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_adc_ex.c():    |           0              |         400              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_cortex.c():    |           0              |         244              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_dma.c():       |           0              |        7724              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_gpio.c():      |           0              |         742              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_pwr_ex.c():    |           0              |          76              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_rcc.c():       |           0              |        2542              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_rcc_ex.c():    |           0              |        5280              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_spi.c():       |           0              |        2306              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_tim.c():       |           0              |        1984              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_tim_ex.c():    |           0              |         630              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_uart.c():      |           0              |        8898              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\stm32h7xx_hal_uart_ex.c():   |           0              |         200              |
+..\cpu\stm32h7xx_it.c():                                                          |           0              |          48              |
+..\..\..\lib\STMicroelectronics\stm32h7xx\arch\system_stm32h7xx.c():              |           8              |         264              |
+..\..\..\components\fp-sdk\packages\tle5012b\tle5012b_sensor.c():                 |           0              |         658              |
+..\..\..\components\fp-sdk\packages\vofa\vofa.c():                                |          40              |          92              |
+-----------------------------------------------------------------------------------------------------------------------------------------
+LR_IROM1
+        SRAM 1               [0x20000000 | 0x00020000 (131072)]
+                DEV_REGION   [0x20000000]|■■■■■■■■■■■■■■■■■■■■■■■___________________________| (      240 /      512 )  46.9%  
+                DRV_REGION   [0x20000200]|■■■■■■■■■■■■■■■■■_________________________________| (      180 /      512 )  35.2%  
+                RW_DTCM      [0x20000400]|■__________________________________________________| (      284 / 127.0 KB )   0.2%  
+
+        SRAM 2               [0x24000000 | 0x00080000 (524288)]
+                RW_AXI_SRAM  [0x24000000]|■__________________________________________________| (   7.7 KB / 512.0 KB )   1.5%  
+
+        FLASH 1              [0x08000000 | 0x00200000 (2097152)]
+                ER_IROM1     [0x08000000]|■_________________________________________________| (  60.4 KB /  2.00 MB )   2.9%  [+56]
+
+        UNKNOWN
+                RW_D2_DMA    [0x30000000]|■__________________________________________________| (        8 / 288.0 KB )   0.0%  
+
+Maximum Stack Usage =        368 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)
+
+=============================================================================================================================
+
 ".\Objects\armfly-v7.axf" - 0 Error(s), 0 Warning(s).
-Build Time Elapsed:  00:00:05
+Build Time Elapsed:  00:00:04
