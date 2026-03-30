@@ -1,7 +1,5 @@
 # foc_pmsm_demo V0.1
-
-
-
+https://github.com/user-attachments/assets/f77eae83-1ec1-4d76-a0e1-7254db6fa320
 ## 项目简介
 
 这个仓库记录的是我最近在做的一套有感FOC的示例程序。  
