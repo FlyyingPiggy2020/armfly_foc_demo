@@ -10,7 +10,6 @@
 
 /*---------- includes ----------*/
 #include "options.h"
-#include "cpu.h"
 #include "bsp_encoder.h"
 #include "bsp_foc.h"
 #include "analog.h"
@@ -20,7 +19,7 @@
 /*---------- type define ----------*/
 /*---------- variable prototype ----------*/
 static void _foc_port_read_current_loop_sample(void *user_data, foc_current_loop_sample_t *sample);
-static void _foc_port_get_electrical_angle(void *user_data, uint32_t target_tick_us, foc_angle_sample_t *sample);
+static void _foc_port_get_mechanical_angle(void *user_data, uint32_t target_tick_us, foc_mechanical_angle_sample_t *sample);
 static void _foc_port_write_pwm_duty(void *user_data, const foc_pwm_duty_t *duty);
 static void _foc_port_set_output_enable(void *user_data, bool enable);
 static bool _foc_port_read_adc_channel(struct foc_port_ctx *ctx, uint32_t channel, uint16_t *adc_code);
@@ -28,7 +27,6 @@ static bool _foc_port_write_pwm_channel(struct foc_port_ctx *ctx, uint8_t channe
 /*---------- variable ----------*/
 static motor_profile_t g_motor_profile = {
     .pole_pairs = 7U,
-    .electrical_direction = 1,
     .inv_i_base = 1,
     .inv_v_base = 0.144337f,
 };
@@ -39,7 +37,7 @@ static power_stage_profile_t g_power_stage_profile = {
 };
 static sensor_profile_t g_sensor_profile = {
     .encoder_cpr = 32768U,
-    .encoder_direction = 1,
+    .angle_direction = 1,
 };
 static foc_ctrl_cfg_t g_ctrl_cfg = {
     .id_kp_pu = 0.5079f,
@@ -53,7 +51,7 @@ static foc_ctrl_cfg_t g_ctrl_cfg = {
 
 static const foc_hal_ops_t g_foc_port_hal_ops = {
     .read_current_loop_sample = _foc_port_read_current_loop_sample,
-    .get_electrical_angle = _foc_port_get_electrical_angle,
+    .get_mechanical_angle = _foc_port_get_mechanical_angle,
     .write_pwm_duty = _foc_port_write_pwm_duty,
     .set_output_enable = _foc_port_set_output_enable,
 };
@@ -139,17 +137,15 @@ static void _foc_port_read_current_loop_sample(void *user_data, foc_current_loop
 
 }
 
-static void _foc_port_get_electrical_angle(void *user_data, uint32_t target_tick_us, foc_angle_sample_t *sample)
+static void _foc_port_get_mechanical_angle(void *user_data, uint32_t target_tick_us, foc_mechanical_angle_sample_t *sample)
 {
-    static float angle = 0;
-
     if (sample == NULL) {
         return;
     }
     (void)user_data;
 
-    /* 电流环在消费点实时拉取磁编角度，读取失败时再退回调试兜底角度。 */
-    bsp_encoder_get_angle_sample(target_tick_us, sample);
+    /* 板级层只提供原始机械角样本，电角度换算统一交给 FOC 核心处理。 */
+    bsp_encoder_get_mechanical_angle_sample(target_tick_us, sample);
 }
 
 static void _foc_port_write_pwm_duty(void *user_data, const foc_pwm_duty_t *duty)

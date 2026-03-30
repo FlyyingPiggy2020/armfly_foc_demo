@@ -119,9 +119,13 @@ static void _app_key_dispatch_event(uint32_t event)
             xlog_count("K1 key down\r\n");
             break;
         case APP_KEY_UP_K1:
+            msg.code = APP_KEY_UP_K1;
+            (void)msgbus_topic_publish(g_app_key.key_topic, &msg, sizeof(msg));
             xlog_count("K1 key up\r\n");
             break;
         case APP_KEY_LONG_K1:
+            msg.code = APP_KEY_LONG_K1;
+            (void)msgbus_topic_publish(g_app_key.key_topic, &msg, sizeof(msg));
             xlog_count("K1 key long\r\n");
             break;
         case APP_KEY_DOWN_K2:
@@ -130,9 +134,13 @@ static void _app_key_dispatch_event(uint32_t event)
             xlog_count("K2 key down\r\n");
             break;
         case APP_KEY_UP_K2:
+            msg.code = APP_KEY_UP_K2;
+            (void)msgbus_topic_publish(g_app_key.key_topic, &msg, sizeof(msg));
             xlog_count("K2 key up\r\n");
             break;
         case APP_KEY_LONG_K2:
+            msg.code = APP_KEY_LONG_K2;
+            (void)msgbus_topic_publish(g_app_key.key_topic, &msg, sizeof(msg));
             xlog_count("K2 key long\r\n");
             break;
         case APP_KEY_DOWN_K3:
@@ -141,9 +149,13 @@ static void _app_key_dispatch_event(uint32_t event)
             xlog_count("K3 key down\r\n");
             break;
         case APP_KEY_UP_K3:
+            msg.code = APP_KEY_UP_K3;
+            (void)msgbus_topic_publish(g_app_key.key_topic, &msg, sizeof(msg));
             xlog_count("K3 key up\r\n");
             break;
         case APP_KEY_LONG_K3:
+            msg.code = APP_KEY_LONG_K3;
+            (void)msgbus_topic_publish(g_app_key.key_topic, &msg, sizeof(msg));
             xlog_count("K3 key long\r\n");
             break;
         case APP_KEY_NONE:

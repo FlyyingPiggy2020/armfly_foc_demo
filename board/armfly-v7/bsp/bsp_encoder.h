@@ -29,12 +29,19 @@ extern "C" {
 int bsp_encoder_init(void);
 
 /**
- * @brief  实时读取当前电角度样本
- * @param  target_tick_us: 当前目标时刻，非 0 时用于对齐输出时间戳
- * @param  sample: 输出角度样本
+ * @brief  实时读取当前机械角度
+ * @param  mechanical_angle_deg: 输出机械角度，单位度
  * @return true=读取成功, false=读取失败
  */
-bool bsp_encoder_get_angle_sample(uint32_t target_tick_us, foc_angle_sample_t *sample);
+bool bsp_encoder_get_mechanical_angle_deg(foc_angle_t *mechanical_angle_deg);
+
+/**
+ * @brief  实时读取当前机械角样本
+ * @param  target_tick_us: 当前目标时刻，非 0 时用于对齐输出时间戳
+ * @param  sample: 输出机械角样本
+ * @return true=读取成功, false=读取失败
+ */
+bool bsp_encoder_get_mechanical_angle_sample(uint32_t target_tick_us, foc_mechanical_angle_sample_t *sample);
 /*---------- end of file ----------*/
 #ifdef __cplusplus
 }

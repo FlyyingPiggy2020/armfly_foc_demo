@@ -21,20 +21,35 @@ struct logic_key_ctx {
     struct msgbus_node node;
     msgbus_topic_t key_topic;
     msgbus_service_t foc_service;
+    bool k1_is_pressed;
+    bool k1_long_triggered;
     bool is_init;
 };
 /*---------- variable prototype ----------*/
 /*---------- function prototype ----------*/
 static void _logic_key_on_key_event(
     msgbus_node_t node, const char *topic, const void *msg, uint32_t size, void *user_data);
+static void _logic_key_send_foc_command(enum app_protocol_foc_control_cmd cmd);
 /*---------- variable ----------*/
 static struct logic_key_ctx g_logic_key;
 /*---------- function ----------*/
+static void _logic_key_send_foc_command(enum app_protocol_foc_control_cmd cmd)
+{
+    struct app_protocol_foc_service_req req = { 0 };
+
+    if (g_logic_key.foc_service == NULL) {
+        return;
+    }
+
+    req.cmd = APP_PROTOCOL_FOC_SERVICE_CMD_CONTROL;
+    req.data.control.cmd = cmd;
+    (void)msgbus_service_call(g_logic_key.foc_service, &req, sizeof(req), NULL, NULL);
+}
+
 static void _logic_key_on_key_event(
     msgbus_node_t node, const char *topic, const void *msg, uint32_t size, void *user_data)
 {
     const struct app_protocol_key_event *event = (const struct app_protocol_key_event *)msg;
-    struct app_protocol_foc_service_req req = { 0 };
 
     (void)node;
     (void)topic;
@@ -44,23 +59,33 @@ static void _logic_key_on_key_event(
         return;
     }
 
-    req.cmd = APP_PROTOCOL_FOC_SERVICE_CMD_CONTROL;
-
     switch (event->code) {
         case APP_KEY_DOWN_K1:
-            req.data.control.cmd = APP_PROTOCOL_FOC_CONTROL_CMD_TOGGLE;
+            g_logic_key.k1_is_pressed = true;
+            g_logic_key.k1_long_triggered = false;
+            break;
+        case APP_KEY_UP_K1:
+            if (g_logic_key.k1_is_pressed && !g_logic_key.k1_long_triggered) {
+                _logic_key_send_foc_command(APP_PROTOCOL_FOC_CONTROL_CMD_MOTOR_SWITCH);
+            }
+            g_logic_key.k1_is_pressed = false;
+            g_logic_key.k1_long_triggered = false;
+            break;
+        case APP_KEY_LONG_K1:
+            if (g_logic_key.k1_is_pressed) {
+                _logic_key_send_foc_command(APP_PROTOCOL_FOC_CONTROL_CMD_CALIBRATE_ELECTRICAL_ZERO);
+                g_logic_key.k1_long_triggered = true;
+            }
             break;
         case APP_KEY_DOWN_K2:
-            req.data.control.cmd = APP_PROTOCOL_FOC_CONTROL_CMD_SPEED_UP;
+            _logic_key_send_foc_command(APP_PROTOCOL_FOC_CONTROL_CMD_SPEED_INC);
             break;
         case APP_KEY_DOWN_K3:
-            req.data.control.cmd = APP_PROTOCOL_FOC_CONTROL_CMD_SPEED_DOWN;
+            _logic_key_send_foc_command(APP_PROTOCOL_FOC_CONTROL_CMD_SPEED_DEC);
             break;
         default:
             return;
     }
-
-    (void)msgbus_service_call(g_logic_key.foc_service, &req, sizeof(req), NULL, NULL);
 }
 
 bool logic_key_init(void)

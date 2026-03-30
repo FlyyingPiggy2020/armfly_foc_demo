@@ -31,6 +31,9 @@ TIM_HandleTypeDef htim1;
 static pwmc_describe_t s_motor_pwm_desc = {
     .is_enable = false,
     .is_manual_freq = true,
+    .priv = {
+        .arr = 12500,
+    },
     .priv.channel = {
         [PWMC_CHANNEL1] = { .used = true, .duty = 0.5f, .crr = 0U },
         [PWMC_CHANNEL2] = { .used = true, .duty = 0.5f, .crr = 0U },
@@ -129,7 +132,7 @@ static bool _motor_pwm_init(void)
     __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 6250); /* 50%占空比 */
     __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 6250); /* 50%占空比 */
     __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 6250); /* 50%占空比 */
-    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_4, 10);   /* TRGO触发点 */
+    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_4, 300);  /* TRGO触发点 */
 
     if (HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1) != HAL_OK) {
         return false;
@@ -174,7 +177,7 @@ static int32_t _motor_pwm_update_crr(uint8_t channel, uint32_t crr)
             break;
         default:
             return E_WRONG_ARGS;
-    }
+    }      
 
     return E_OK;
 }

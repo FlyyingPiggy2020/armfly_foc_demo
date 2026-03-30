@@ -11,7 +11,6 @@
 /*---------- includes ----------*/
 #include "options.h"
 #include "bsp_encoder.h"
-#include "bsp_foc.h"
 #include "cpu.h"
 #include "tle5012b/tle5012b_sensor.h"
 /*---------- macro ----------*/
@@ -24,7 +23,7 @@ struct bsp_encoder_ctx {
 };
 /*---------- variable prototype ----------*/
 static foc_angle_t _bsp_encoder_wrap_angle_deg(foc_angle_t angle);
-static foc_angle_t _bsp_encoder_convert_mechanical_to_electrical(foc_angle_t mechanical_angle_deg);
+static bool _bsp_encoder_read_angle_data(struct tle5012b_angle_data *angle_data);
 /*---------- function prototype ----------*/
 /*---------- variable ----------*/
 static struct bsp_encoder_ctx g_bsp_encoder_ctx = { 0 };
@@ -41,23 +40,16 @@ static foc_angle_t _bsp_encoder_wrap_angle_deg(foc_angle_t angle)
     return angle;
 }
 
-static foc_angle_t _bsp_encoder_convert_mechanical_to_electrical(foc_angle_t mechanical_angle_deg)
+static bool _bsp_encoder_read_angle_data(struct tle5012b_angle_data *angle_data)
 {
-    const motor_profile_t *motor_profile = foc_port_get_motor_profile();
-    const sensor_profile_t *sensor_profile = foc_port_get_sensor_profile();
-    foc_scalar_t direction = 1.0f;
-    foc_angle_t electrical_angle = 0.0f;
-
-    if ((motor_profile == NULL) || (sensor_profile == NULL)) {
-        return 0.0f;
+    if (angle_data == NULL) {
+        return false;
+    }
+    if (!g_bsp_encoder_ctx.is_ready) {
+        return false;
     }
 
-    direction = (foc_scalar_t)sensor_profile->encoder_direction * (foc_scalar_t)motor_profile->electrical_direction;
-    electrical_angle = mechanical_angle_deg * direction * (foc_scalar_t)motor_profile->pole_pairs;
-    electrical_angle += motor_profile->electrical_offset;
-    electrical_angle += sensor_profile->electrical_offset;
-
-    return _bsp_encoder_wrap_angle_deg(electrical_angle);
+    return tle5012b_sensor_read_angle(&g_bsp_encoder_ctx.sensor, angle_data) == E_OK;
 }
 
 int bsp_encoder_init(void)
@@ -84,7 +76,23 @@ int bsp_encoder_init(void)
     return E_OK;
 }
 
-bool bsp_encoder_get_angle_sample(uint32_t target_tick_us, foc_angle_sample_t *sample)
+bool bsp_encoder_get_mechanical_angle_deg(foc_angle_t *mechanical_angle_deg)
+{
+    struct tle5012b_angle_data angle_data = { 0 };
+
+    if (mechanical_angle_deg == NULL) {
+        return false;
+    }
+    if (!_bsp_encoder_read_angle_data(&angle_data)) {
+        return false;
+    }
+
+    *mechanical_angle_deg = _bsp_encoder_wrap_angle_deg(angle_data.mechanical_angle_deg);
+
+    return true;
+}
+
+bool bsp_encoder_get_mechanical_angle_sample(uint32_t target_tick_us, foc_mechanical_angle_sample_t *sample)
 {
     struct tle5012b_angle_data angle_data = { 0 };
     uint32_t angle_tick_us = 0U;
@@ -93,12 +101,9 @@ bool bsp_encoder_get_angle_sample(uint32_t target_tick_us, foc_angle_sample_t *s
         return false;
     }
 
-    *sample = (foc_angle_sample_t){ 0 };
+    *sample = (foc_mechanical_angle_sample_t){ 0 };
 
-    if (!g_bsp_encoder_ctx.is_ready) {
-        return false;
-    }
-    if (tle5012b_sensor_read_angle(&g_bsp_encoder_ctx.sensor, &angle_data) != E_OK) {
+    if (!_bsp_encoder_read_angle_data(&angle_data)) {
         return false;
     }
 
@@ -108,8 +113,8 @@ bool bsp_encoder_get_angle_sample(uint32_t target_tick_us, foc_angle_sample_t *s
         angle_tick_us = (uint32_t)(tick_get() * 1000ULL);
     }
 
-    sample->electrical_angle = _bsp_encoder_convert_mechanical_to_electrical(angle_data.mechanical_angle_deg);
-    sample->electrical_speed = 0.0f;
+    sample->mechanical_angle = _bsp_encoder_wrap_angle_deg(angle_data.mechanical_angle_deg);
+    sample->mechanical_speed = 0.0f;
     sample->angle_tick_us = angle_tick_us;
     sample->status = FOC_ANGLE_STATUS_VALID;
 

@@ -191,8 +191,9 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
     if (hadc->Instance != ADC1) {
         return;
     }
-    //HAL_GPIO_WritePin(GPIOJ, GPIO_PIN_7, GPIO_PIN_RESET);
+    
+    HAL_GPIO_TogglePin(GPIOJ, GPIO_PIN_7);
     device_irq_process(&device_motor_adc, 0, NULL, 0);
-    //HAL_GPIO_WritePin(GPIOJ, GPIO_PIN_7, GPIO_PIN_SET);
+    HAL_GPIO_TogglePin(GPIOJ, GPIO_PIN_7);
 }
 /*---------- end of file ----------*/

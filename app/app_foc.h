@@ -30,10 +30,34 @@ typedef struct {
 } app_foc_t;
 /*---------- variable prototype ----------*/
 /*---------- function prototype ----------*/
+/**
+ * @brief  初始化 FOC 应用层
+ * @return true=成功, false=失败
+ */
 bool app_foc_init(void);
-void app_foc_toggle_enable(void);
-void app_foc_speed_up(void);
-void app_foc_speed_down(void);
+
+/**
+ * @brief  切换电机启停状态
+ * @note   标定进行中会忽略该命令
+ */
+void app_foc_motor_switch(void);
+
+/**
+ * @brief  增加速度给定
+ * @note   标定进行中会忽略该命令
+ */
+void app_foc_speed_inc(void);
+
+/**
+ * @brief  减少速度给定
+ * @note   标定进行中会忽略该命令
+ */
+void app_foc_speed_dec(void);
+
+/**
+ * @brief  获取全局 FOC 控制器对象
+ * @return pmsm_foc_t 控制器指针
+ */
 pmsm_foc_t *app_foc_get_foc(void);
 /*---------- end of file ----------*/
 #ifdef __cplusplus

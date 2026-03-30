@@ -15,6 +15,7 @@
 #include "app_msgbus.h"
 #include "bsp_encoder.h"
 #include "logic_debug.h"
+#include "logic_foc_calibration.h"
 #include "logic_key.h"
 #include "options.h"
 #include "driver.h"
@@ -70,6 +71,12 @@ int main(void)
         }
     }
 
+    if (!logic_foc_calibration_init()) {
+        xlog_count("main: logic_foc_calibration_init failed\r\n");
+        while (1) {
+        }
+    }
+
     if (!logic_debug_init()) {
         xlog_count("main: logic_debug_init failed\r\n");
         while (1) {
@@ -78,6 +85,7 @@ int main(void)
 
     while (1) {
         app_key_process();
+        logic_foc_calibration_process();
         app_comm_process();
         fp_timer_handler();
     }

@@ -415,6 +415,11 @@
               <FilePath>..\..\..\app\logic_debug.c</FilePath>
             </File>
             <File>
+              <FileName>logic_foc_calibration.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\app\logic_foc_calibration.c</FilePath>
+            </File>
+            <File>
               <FileName>app_msgbus.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\app\app_msgbus.c</FilePath>
