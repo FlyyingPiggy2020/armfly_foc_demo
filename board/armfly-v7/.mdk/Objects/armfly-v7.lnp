@@ -46,6 +46,7 @@
 ".\objects\dev_uart.o"
 ".\objects\spi_bus.o"
 ".\objects\pmsm_foc.o"
+".\objects\foc_zero_calibration.o"
 ".\objects\foc_transform.o"
 ".\objects\foc_svpwm.o"
 ".\objects\foc_pi.o"

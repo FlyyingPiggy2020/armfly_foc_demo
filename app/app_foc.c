@@ -16,9 +16,9 @@
 #include "logic_foc_calibration.h"
 #include <string.h>
 /*---------- macro ----------*/
-#define APP_FOC_DEFAULT_SPEED_REF              300.0f
-#define APP_FOC_SPEED_STEP                     100.0f
-#define APP_FOC_NODE_NAME                      "foc"
+#define APP_FOC_DEFAULT_SPEED_REF 300.0f
+#define APP_FOC_SPEED_STEP        100.0f
+#define APP_FOC_NODE_NAME         "foc"
 /*---------- type define ----------*/
 /*---------- variable prototype ----------*/
 /*---------- function prototype ----------*/

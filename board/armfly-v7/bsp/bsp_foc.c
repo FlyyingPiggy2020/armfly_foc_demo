@@ -134,7 +134,6 @@ static void _foc_port_read_current_loop_sample(void *user_data, foc_current_loop
     sample->b_real = (foc_scalar_t)(b_adc - 32767.0f) * 5.0354772e-5;
     sample->bus_voltage = 12.0f;
     sample->sample_tick_us = (uint32_t)(tick_get_from_isr() * 1000ULL);
-
 }
 
 static void _foc_port_get_mechanical_angle(void *user_data, uint32_t target_tick_us, foc_mechanical_angle_sample_t *sample)
@@ -189,7 +188,7 @@ bool foc_port_init(void)
     if ((g_foc_port_ctx.current_dev != NULL) && (g_foc_port_ctx.pwm_dev != NULL)) {
         return true;
     }
-    
+
     // 必须先打开定时器，再初始化ADC；因为ADC的采样源触发源是定时器的事件，如果先后顺序搞反，则无法进行ADC采集
     g_foc_port_ctx.pwm_dev = (device_t *)device_open("motor_pwm");
     g_foc_port_ctx.current_dev = (device_t *)device_open("motor_adc");

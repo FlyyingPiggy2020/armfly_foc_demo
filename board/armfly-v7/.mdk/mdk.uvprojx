@@ -690,6 +690,11 @@
               <FilePath>..\..\..\components\fp-sdk\motion\foc\pmsm_foc.c</FilePath>
             </File>
             <File>
+              <FileName>foc_zero_calibration.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\motion\foc\foc_zero_calibration.c</FilePath>
+            </File>
+            <File>
               <FileName>foc_transform.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\fp-sdk\motion\foc\math\foc_transform.c</FilePath>

@@ -177,7 +177,7 @@ static int32_t _motor_pwm_update_crr(uint8_t channel, uint32_t crr)
             break;
         default:
             return E_WRONG_ARGS;
-    }      
+    }
 
     return E_OK;
 }

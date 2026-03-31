@@ -39,30 +39,30 @@ void cpu_config(void)
 {
     uint32_t relocate = 0;
 
-//    /* 1. 设置中断向量表 */
-//#if defined(__CC_ARM) || defined(__ARMCC_VERSION)
-//    relocate = (uint32_t)Image$$ER_IROM1$$Base;
-//#elif defined(__GNUC__)
-//    relocate = (uint32_t)&_sisr_vector;
-//#endif
+    //    /* 1. 设置中断向量表 */
+    // #if defined(__CC_ARM) || defined(__ARMCC_VERSION)
+    //    relocate = (uint32_t)Image$$ER_IROM1$$Base;
+    // #elif defined(__GNUC__)
+    //    relocate = (uint32_t)&_sisr_vector;
+    // #endif
 
-//#ifdef VECT_TAB_SRAM
-//    SCB->VTOR = SRAM_BASE | (relocate - SRAM_BASE);
-//#else
-//    SCB->VTOR = FLASH_BASE | (relocate - FLASH_BASE);
-//#endif
+    // #ifdef VECT_TAB_SRAM
+    //     SCB->VTOR = SRAM_BASE | (relocate - SRAM_BASE);
+    // #else
+    //     SCB->VTOR = FLASH_BASE | (relocate - FLASH_BASE);
+    // #endif
 
     HAL_Init();
-    
+
     /* 2. 配置时钟树 */
     SystemClock_Config();
-    
+
     /* 3. 使能全局中断，退出临界段 */
     exit_critical();
-    
+
     /* 6. 设置嘀嗒定时器为1Khz 内部会将SysTick_IRQn的优先级设置为15(最低) */
     SysTick_Config(SystemCoreClock / 1000UL);
-    
+
     /* 7. 使能SEGGER RTT */
 #if CONFIG_SEGGERRTT_ENABLE
     SEGGER_RTT_Init();

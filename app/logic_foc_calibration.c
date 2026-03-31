@@ -12,6 +12,7 @@
 #include "options.h"
 #include "logic_foc_calibration.h"
 #include "app_foc.h"
+#include "foc_zero_calibration.h"
 #include <string.h>
 /*---------- macro ----------*/
 #define LOGIC_FOC_CALIBRATION_ALIGN_ANGLE_DEG    0.0f
@@ -40,65 +41,11 @@ struct logic_foc_calibration_ctx {
 };
 /*---------- variable prototype ----------*/
 /*---------- function prototype ----------*/
-static foc_angle_t _logic_foc_calibration_wrap_angle_deg(foc_angle_t angle_deg);
-static foc_angle_t _logic_foc_calibration_calc_electrical_zero_offset_deg(
-    pmsm_foc_t *foc, foc_angle_t mechanical_angle_deg, foc_angle_t target_angle_deg);
-static foc_angle_t _logic_foc_calibration_update_mechanical_angle_avg(
-    foc_angle_t current_avg_deg, uint16_t sample_count, foc_angle_t sample_deg);
 static void _logic_foc_calibration_enter_failed(const char *reason);
 static void _logic_foc_calibration_enter_done(void);
 /*---------- variable ----------*/
 static struct logic_foc_calibration_ctx g_logic_foc_calibration;
 /*---------- function ----------*/
-static foc_angle_t _logic_foc_calibration_wrap_angle_deg(foc_angle_t angle_deg)
-{
-    while (angle_deg >= 360.0f) {
-        angle_deg -= 360.0f;
-    }
-    while (angle_deg < 0.0f) {
-        angle_deg += 360.0f;
-    }
-
-    return angle_deg;
-}
-
-static foc_angle_t _logic_foc_calibration_calc_electrical_zero_offset_deg(
-    pmsm_foc_t *foc, foc_angle_t mechanical_angle_deg, foc_angle_t target_angle_deg)
-{
-    const sensor_profile_t *sensor_profile = NULL;
-    const motor_profile_t *motor_profile = NULL;
-    foc_angle_t electrical_angle_without_zero = 0.0f;
-
-    if (foc == NULL) {
-        return 0.0f;
-    }
-
-    sensor_profile = foc->sensor_profile;
-    motor_profile = foc->motor_profile;
-    if ((motor_profile == NULL) || (sensor_profile == NULL)) {
-        return 0.0f;
-    }
-
-    electrical_angle_without_zero =
-        mechanical_angle_deg * (foc_scalar_t)sensor_profile->angle_direction * (foc_scalar_t)motor_profile->pole_pairs;
-
-    return _logic_foc_calibration_wrap_angle_deg(target_angle_deg - electrical_angle_without_zero);
-}
-
-static foc_angle_t _logic_foc_calibration_update_mechanical_angle_avg(
-    foc_angle_t current_avg_deg, uint16_t sample_count, foc_angle_t sample_deg)
-{
-    foc_scalar_t next_count = 0.0f;
-
-    if (sample_count == UINT16_MAX) {
-        return current_avg_deg;
-    }
-
-    next_count = (foc_scalar_t)(sample_count + 1U);
-
-    return current_avg_deg + ((sample_deg - current_avg_deg) / next_count);
-}
-
 static void _logic_foc_calibration_enter_failed(const char *reason)
 {
     pmsm_foc_t *foc = app_foc_get_foc();
@@ -144,7 +91,6 @@ bool logic_foc_calibration_init(void)
 void logic_foc_calibration_process(void)
 {
     pmsm_foc_t *foc = app_foc_get_foc();
-    foc_dq_t voltage_cmd_dq = { 0 };
     foc_mechanical_angle_sample_t mechanical_sample = { 0 };
     foc_angle_t electrical_zero_offset_deg = 0.0f;
     uint64_t tick_now = get_ticks();
@@ -164,9 +110,10 @@ void logic_foc_calibration_process(void)
             g_logic_foc_calibration.sample_tick_ms = tick_now;
             g_logic_foc_calibration.tick_ms = tick_now;
 
-            voltage_cmd_dq.d = LOGIC_FOC_CALIBRATION_ALIGN_VOLTAGE_D_PU;
-            voltage_cmd_dq.q = 0.0f;
-            if (!pmsm_foc_apply_voltage_vector(foc, &voltage_cmd_dq, g_logic_foc_calibration.target_angle_deg, true)) {
+            if (!foc_zero_calibration_apply_alignment_vector(foc,
+                                                             g_logic_foc_calibration.target_angle_deg,
+                                                             LOGIC_FOC_CALIBRATION_ALIGN_VOLTAGE_D_PU,
+                                                             true)) {
                 _logic_foc_calibration_enter_failed("apply align vector failed");
                 break;
             }
@@ -193,14 +140,12 @@ void logic_foc_calibration_process(void)
             }
 
             foc->hal_ops.get_mechanical_angle(foc->hal_user_data, (uint32_t)(tick_now * 1000ULL), &mechanical_sample);
-            if ((mechanical_sample.status != FOC_ANGLE_STATUS_VALID)
-                && (mechanical_sample.status != FOC_ANGLE_STATUS_PREDICTED)
-                && (mechanical_sample.status != FOC_ANGLE_STATUS_ESTIMATED)) {
+            if (!foc_zero_calibration_is_mechanical_sample_valid(&mechanical_sample)) {
                 _logic_foc_calibration_enter_failed("read encoder angle failed");
                 break;
             }
 
-            g_logic_foc_calibration.mechanical_angle_avg_deg = _logic_foc_calibration_update_mechanical_angle_avg(
+            g_logic_foc_calibration.mechanical_angle_avg_deg = foc_zero_calibration_update_average(
                 g_logic_foc_calibration.mechanical_angle_avg_deg,
                 g_logic_foc_calibration.sample_count,
                 mechanical_sample.mechanical_angle);
@@ -210,7 +155,7 @@ void logic_foc_calibration_process(void)
                 break;
             }
 
-            electrical_zero_offset_deg = _logic_foc_calibration_calc_electrical_zero_offset_deg(
+            electrical_zero_offset_deg = foc_zero_calibration_calc_electrical_zero_offset(
                 foc, g_logic_foc_calibration.mechanical_angle_avg_deg, g_logic_foc_calibration.target_angle_deg);
             pmsm_foc_set_electrical_zero_offset(foc, electrical_zero_offset_deg);
 

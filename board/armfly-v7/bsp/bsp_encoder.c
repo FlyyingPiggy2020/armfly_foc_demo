@@ -14,7 +14,7 @@
 #include "cpu.h"
 #include "tle5012b/tle5012b_sensor.h"
 /*---------- macro ----------*/
-#define BSP_ENCODER_DEVICE_NAME  "spi1_tle5012b"
+#define BSP_ENCODER_DEVICE_NAME "spi1_tle5012b"
 /*---------- type define ----------*/
 struct bsp_encoder_ctx {
     device_t *spi_dev;

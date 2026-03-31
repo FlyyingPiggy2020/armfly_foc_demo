@@ -31,7 +31,7 @@
 
 [region info]
 [load region] LR_IROM1
-	[execution region] ER_IROM1, 0x08000000, 0x00200000, 0x0000F180 [type] 2 [ID] 4
+	[execution region] ER_IROM1, 0x08000000, 0x00200000, 0x0000F1C0 [type] 2 [ID] 4
 
 	[execution region] DEV_REGION, 0x20000000, 0x00000200, 0x000000F0 [type] 1 [ID] 2
 
@@ -70,6 +70,7 @@
 [object name] foc_profile.o             [path] ..\..\..\components\fp-sdk\motion\foc\profile\foc_profile.c
 [object name] foc_svpwm.o               [path] ..\..\..\components\fp-sdk\motion\foc\math\foc_svpwm.c
 [object name] foc_transform.o           [path] ..\..\..\components\fp-sdk\motion\foc\math\foc_transform.c
+[object name] foc_zero_calibration.o    [path] ..\..\..\components\fp-sdk\motion\foc\foc_zero_calibration.c
 [object name] fplog.o                   [path] ..\..\..\components\fp-sdk\utilities\fplog.c
 [object name] heap.o                    [path] ..\..\..\components\fp-sdk\utilities\heap.c
 [object name] logic_debug.o             [path] ..\..\..\app\logic_debug.c
@@ -150,6 +151,7 @@
 [old name] dev_uart.o                [type] 1   [path] ..\..\..\components\fp-sdk\drivers\device\dev_uart.c
 [old name] spi_bus.o                 [type] 1   [path] ..\..\..\components\fp-sdk\drivers\device\bus\spi_bus.c
 [old name] pmsm_foc.o                [type] 1   [path] ..\..\..\components\fp-sdk\motion\foc\pmsm_foc.c
+[old name] foc_zero_calibration.o    [type] 1   [path] ..\..\..\components\fp-sdk\motion\foc\foc_zero_calibration.c
 [old name] foc_transform.o           [type] 1   [path] ..\..\..\components\fp-sdk\motion\foc\math\foc_transform.c
 [old name] foc_svpwm.o               [type] 1   [path] ..\..\..\components\fp-sdk\motion\foc\math\foc_svpwm.c
 [old name] foc_pi.o                  [type] 1   [path] ..\..\..\components\fp-sdk\motion\foc\control\foc_pi.c
@@ -164,7 +166,7 @@
 
 [record region info]
 [load region] LR_IROM1
-	[execution region] ER_IROM1, 0x08000000, 0x00200000, 0x0000F0F0 [type] 2 [ID] 4
+	[execution region] ER_IROM1, 0x08000000, 0x00200000, 0x0000F180 [type] 2 [ID] 4
 	[execution region] DEV_REGION, 0x20000000, 0x00000200, 0x000000F0 [type] 1 [ID] 2
 	[execution region] DRV_REGION, 0x20000200, 0x00000200, 0x000000B4 [type] 1 [ID] 2
 	[execution region] RW_DTCM, 0x20000400, 0x0001FC00, 0x0000011C [type] 1 [ID] 2
@@ -194,15 +196,16 @@
 ..\..\..\components\fp-sdk\motion\foc\profile\foc_profile.c():                    |           0              |          84              |
 ..\..\..\components\fp-sdk\motion\foc\math\foc_svpwm.c():                         |           0              |         476              |
 ..\..\..\components\fp-sdk\motion\foc\math\foc_transform.c():                     |           0              |         104              |
+..\..\..\components\fp-sdk\motion\foc\foc_zero_calibration.c():                   |           0  [NEW]       |         306  [NEW]       |
 ..\..\..\components\fp-sdk\utilities\fplog.c():                                   |         408              |         310              |
 ..\..\..\components\fp-sdk\utilities\heap.c():                                    |        4120              |         606              |
 ..\..\..\app\logic_debug.c():                                                     |          12              |         162              |
-..\..\..\app\logic_foc_calibration.c():                                           |          40              |         720              |
+..\..\..\app\logic_foc_calibration.c():                                           |          40              |         468  [-252]      |
 ..\..\..\app\logic_key.c():                                                       |          44              |         376              |
 ..\src\main.c():                                                                  |           0              |         114              |
 ..\..\..\components\fp-sdk\utilities\message_bus\message_bus.c():                 |           0              |        1096              |
 ..\..\..\components\fp-sdk\utilities\pingpong.c():                                |           0              |         188              |
-..\..\..\components\fp-sdk\motion\foc\pmsm_foc.c():                               |           0              |        1262  [+140]      |
+..\..\..\components\fp-sdk\motion\foc\pmsm_foc.c():                               |           0              |        1262              |
 ..\..\..\components\fp-sdk\drivers\device\pwmc.c():                               |         108              |        3408              |
 ..\..\..\components\fp-sdk\utilities\soft_timer.c():                              |          28              |         690              |
 ..\..\..\components\fp-sdk\drivers\device\bus\spi_bus.c():                        |          44              |        1064              |
@@ -237,7 +240,7 @@ LR_IROM1
                 RW_AXI_SRAM  [0x24000000]|¡ö__________________________________________________| (   7.7 KB / 512.0 KB )   1.5%  
  
         FLASH 1              [0x08000000 | 0x00200000 (2097152)]
-                ER_IROM1     [0x08000000]|¡ö_________________________________________________| (  60.4 KB /  2.00 MB )   2.9%  [+144]
+                ER_IROM1     [0x08000000]|¡ö_________________________________________________| (  60.4 KB /  2.00 MB )   3.0%  [+64]
  
         UNKNOWN
                 RW_D2_DMA    [0x30000000]|¡ö__________________________________________________| (        8 / 288.0 KB )   0.0%  
@@ -247,4 +250,4 @@ Maximum Stack Usage =        368 bytes + Unknown(Functions without stacksize, Cy
  
 =============================================================================================================================
 
-run time: 0.257 s
+run time: 0.250 s
