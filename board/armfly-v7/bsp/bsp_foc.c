@@ -13,16 +13,23 @@
 #include "bsp_encoder.h"
 #include "bsp_foc.h"
 #include "analog.h"
+#include "butter/butter.h"
 #include "pmsm_foc.h"
 #include "pwmc.h"
 /*---------- macro ----------*/
+#define FOC_CURRENT_ADC_MID_CODE                 32767.0f
+#define FOC_CURRENT_ZERO_DRIFT_FILTER_B0         0.00391139f
+#define FOC_CURRENT_ZERO_DRIFT_FILTER_B1         0.00391139f
+#define FOC_CURRENT_ZERO_DRIFT_FILTER_A1         -0.99217722f
+#define FOC_ADC_CODE_TO_CURRENT_SCALE_A_PER_CODE 5.0354772e-5f
 /*---------- type define ----------*/
 /*---------- variable prototype ----------*/
 static void _foc_port_read_current_loop_sample(void *user_data, foc_current_loop_sample_t *sample);
-static void _foc_port_get_mechanical_angle(void *user_data, uint32_t target_tick_us, foc_mechanical_angle_sample_t *sample);
+static bool _foc_port_get_mechanical_angle(void *user_data,
+                                           uint32_t target_tick_us,
+                                           foc_mechanical_angle_sample_t *sample);
 static void _foc_port_write_pwm_duty(void *user_data, const foc_pwm_duty_t *duty);
 static void _foc_port_set_output_enable(void *user_data, bool enable);
-static bool _foc_port_read_adc_channel(struct foc_port_ctx *ctx, uint32_t channel, uint16_t *adc_code);
 static bool _foc_port_write_pwm_channel(struct foc_port_ctx *ctx, uint8_t channel, foc_scalar_t duty);
 /*---------- variable ----------*/
 static motor_profile_t g_motor_profile = {
@@ -44,7 +51,7 @@ static foc_ctrl_cfg_t g_ctrl_cfg = {
     .id_ki_pu = 0.1156f,
     .iq_kp_pu = 0.5079f,
     .iq_ki_pu = 0.1156f,
-    .voltage_limit_pu = 0.95f, // 电压限幅_PU值(需要给采样留时间，所以不能全功率1.0输出)
+    .voltage_limit_pu = 0.5f, // 电压限幅_PU值(需要给采样留时间，所以不能全功率1.0输出)
     .current_loop_hz = 200,
     .speed_loop_hz = 20,
 };
@@ -56,25 +63,25 @@ static const foc_hal_ops_t g_foc_port_hal_ops = {
     .set_output_enable = _foc_port_set_output_enable,
 };
 static struct foc_port_ctx g_foc_port_ctx = { 0 };
+static FilterCoefficientsFloat g_current_a_offset_filter = {
+    .b = { FOC_CURRENT_ZERO_DRIFT_FILTER_B0, FOC_CURRENT_ZERO_DRIFT_FILTER_B1 },
+    .a = { 1.0f, FOC_CURRENT_ZERO_DRIFT_FILTER_A1 },
+    .last_input = FOC_CURRENT_ADC_MID_CODE,
+    .last_output = FOC_CURRENT_ADC_MID_CODE,
+};
+static FilterCoefficientsFloat g_current_b_offset_filter = {
+    .b = { FOC_CURRENT_ZERO_DRIFT_FILTER_B0, FOC_CURRENT_ZERO_DRIFT_FILTER_B1 },
+    .a = { 1.0f, FOC_CURRENT_ZERO_DRIFT_FILTER_A1 },
+    .last_input = FOC_CURRENT_ADC_MID_CODE,
+    .last_output = FOC_CURRENT_ADC_MID_CODE,
+};
+static FilterCoefficientsFloat g_current_c_offset_filter = {
+    .b = { FOC_CURRENT_ZERO_DRIFT_FILTER_B0, FOC_CURRENT_ZERO_DRIFT_FILTER_B1 },
+    .a = { 1.0f, FOC_CURRENT_ZERO_DRIFT_FILTER_A1 },
+    .last_input = FOC_CURRENT_ADC_MID_CODE,
+    .last_output = FOC_CURRENT_ADC_MID_CODE,
+};
 /*---------- function ----------*/
-static bool _foc_port_read_adc_channel(struct foc_port_ctx *ctx, uint32_t channel, uint16_t *adc_code)
-{
-    union analog_ioctl_param param = { 0 };
-
-    if ((ctx == NULL) || (ctx->current_dev == NULL) || (adc_code == NULL)) {
-        return false;
-    }
-
-    param.get.channel = channel;
-    if (device_ioctl(ctx->current_dev, IOCTL_ANALOG_GET, &param) != E_OK) {
-        return false;
-    }
-
-    *adc_code = (uint16_t)param.get.data;
-
-    return true;
-}
-
 static bool _foc_port_write_pwm_channel(struct foc_port_ctx *ctx, uint8_t channel, foc_scalar_t duty)
 {
     union pwmc_ioctl_param param = { 0 };
@@ -103,6 +110,7 @@ static bool _foc_port_write_pwm_channel(struct foc_port_ctx *ctx, uint8_t channe
  */
 static void _foc_port_read_current_loop_sample(void *user_data, foc_current_loop_sample_t *sample)
 {
+    union analog_ioctl_param param = { 0 };
     uint16_t a_adc, b_adc, c_adc;
     struct foc_port_ctx *ctx = (struct foc_port_ctx *)user_data;
 
@@ -119,32 +127,41 @@ static void _foc_port_read_current_loop_sample(void *user_data, foc_current_loop
         return;
     }
 
-    if (!_foc_port_read_adc_channel(ctx, 0U, &a_adc)) {
+    param.get.channel = 1U;
+    if (device_ioctl(ctx->current_dev, IOCTL_ANALOG_GET, &param) != E_OK) {
         return;
     }
-    if (!_foc_port_read_adc_channel(ctx, 1U, &b_adc)) {
-        return;
-    }
-    if (!_foc_port_read_adc_channel(ctx, 2U, &c_adc)) {
-        return;
-    }
+    a_adc = (uint16_t)param.get.data;
 
-    // (foc_scalar_t)(a_adc - 32767.0f) / 65535.0f * 3.3f / 0.010 * 100
-    sample->a_real = (foc_scalar_t)(a_adc - 32767.0f) * 5.0354772e-5;
-    sample->b_real = (foc_scalar_t)(b_adc - 32767.0f) * 5.0354772e-5;
+    param.get.channel = 2U;
+    if (device_ioctl(ctx->current_dev, IOCTL_ANALOG_GET, &param) != E_OK) {
+        return;
+    }
+    b_adc = (uint16_t)param.get.data;
+
+    //    param.get.channel = 2U;
+    //    if (device_ioctl(ctx->current_dev, IOCTL_ANALOG_GET, &param) != E_OK) {
+    //        return;
+    //    }
+    //    c_adc = (uint16_t)param.get.data;
+
+    sample->a_real = ((foc_scalar_t)a_adc - g_sensor_profile.current_a_offset) * FOC_ADC_CODE_TO_CURRENT_SCALE_A_PER_CODE;
+    sample->b_real = ((foc_scalar_t)b_adc - g_sensor_profile.current_b_offset) * FOC_ADC_CODE_TO_CURRENT_SCALE_A_PER_CODE;
     sample->bus_voltage = 12.0f;
     sample->sample_tick_us = (uint32_t)(tick_get_from_isr() * 1000ULL);
 }
 
-static void _foc_port_get_mechanical_angle(void *user_data, uint32_t target_tick_us, foc_mechanical_angle_sample_t *sample)
+static bool _foc_port_get_mechanical_angle(void *user_data,
+                                           uint32_t target_tick_us,
+                                           foc_mechanical_angle_sample_t *sample)
 {
     if (sample == NULL) {
-        return;
+        return false;
     }
     (void)user_data;
 
     /* 板级层只提供原始机械角样本，电角度换算统一交给 FOC 核心处理。 */
-    bsp_encoder_get_mechanical_angle_sample(target_tick_us, sample);
+    return bsp_encoder_get_mechanical_angle_sample(target_tick_us, sample);
 }
 
 static void _foc_port_write_pwm_duty(void *user_data, const foc_pwm_duty_t *duty)
@@ -188,6 +205,10 @@ bool foc_port_init(void)
     if ((g_foc_port_ctx.current_dev != NULL) && (g_foc_port_ctx.pwm_dev != NULL)) {
         return true;
     }
+
+    g_sensor_profile.current_a_offset = FOC_CURRENT_ADC_MID_CODE;
+    g_sensor_profile.current_b_offset = FOC_CURRENT_ADC_MID_CODE;
+    g_sensor_profile.current_c_offset = FOC_CURRENT_ADC_MID_CODE;
 
     // 必须先打开定时器，再初始化ADC；因为ADC的采样源触发源是定时器的事件，如果先后顺序搞反，则无法进行ADC采集
     g_foc_port_ctx.pwm_dev = (device_t *)device_open("motor_pwm");
@@ -248,5 +269,41 @@ bool foc_port_register_current_loop_irq(int32_t (*irq_handler)(uint32_t irq, voi
     }
 
     return device_ioctl(g_foc_port_ctx.current_dev, IOCTL_ANALOG_SET_IRQ_HANDLER, irq_handler) == E_OK;
+}
+
+bool foc_port_update_current_zero_drift_sample(void)
+{
+    union analog_ioctl_param param = { 0 };
+    uint16_t a_adc = 0U;
+    uint16_t b_adc = 0U;
+    uint16_t c_adc = 0U;
+
+    if (g_foc_port_ctx.current_dev == NULL) {
+        return false;
+    }
+
+    param.get.channel = 1U;
+    if (device_ioctl(g_foc_port_ctx.current_dev, IOCTL_ANALOG_GET, &param) != E_OK) {
+        return false;
+    }
+    a_adc = (uint16_t)param.get.data;
+
+    param.get.channel = 2U;
+    if (device_ioctl(g_foc_port_ctx.current_dev, IOCTL_ANALOG_GET, &param) != E_OK) {
+        return false;
+    }
+    b_adc = (uint16_t)param.get.data;
+
+    // param.get.channel = 2U;
+    // if (device_ioctl(g_foc_port_ctx.current_dev, IOCTL_ANALOG_GET, &param) != E_OK) {
+    //     return false;
+    // }
+    // c_adc = (uint16_t)param.get.data;
+
+    g_sensor_profile.current_a_offset = low_pass_filter_f(&g_current_a_offset_filter, (foc_scalar_t)a_adc);
+    g_sensor_profile.current_b_offset = low_pass_filter_f(&g_current_b_offset_filter, (foc_scalar_t)b_adc);
+    // g_sensor_profile.current_c_offset = low_pass_filter_f(&g_current_c_offset_filter, (foc_scalar_t)c_adc);
+
+    return true;
 }
 /*---------- end of file ----------*/

@@ -42,12 +42,12 @@ static void _logic_debug_timer_cb(fp_timer_t *timer)
         return;
     }
 
-    req.cmd = APP_PROTOCOL_FOC_SERVICE_CMD_GET_PWM_DUTY;
+    req.cmd = APP_PROTOCOL_FOC_SERVICE_CMD_GET_REALTIME;
     if (msgbus_service_call(g_logic_debug.foc_service, &req, sizeof(req), &resp, &resp_size) != MSGBUS_ERR_NONE) {
         return;
     }
 
-    (void)app_comm_send_foc_pwm_duty(&resp.data.pwm_duty);
+    (void)app_comm_send_foc_realtime(&resp.data.foc_realtime);
 }
 
 bool logic_debug_init(void)

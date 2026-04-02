@@ -22,7 +22,7 @@ extern "C" {
 /*---------- variable prototype ----------*/
 /*---------- function prototype ----------*/
 bool app_comm_init(void);
-bool app_comm_send_foc_pwm_duty(const struct app_protocol_foc_pwm_duty *duty);
+bool app_comm_send_foc_realtime(const struct app_protocol_foc_realtime *realtime);
 void app_comm_process(void);
 /*---------- end of file ----------*/
 #ifdef __cplusplus

@@ -116,7 +116,6 @@ bool bsp_encoder_get_mechanical_angle_sample(uint32_t target_tick_us, foc_mechan
     sample->mechanical_angle = _bsp_encoder_wrap_angle_deg(angle_data.mechanical_angle_deg);
     sample->mechanical_speed = 0.0f;
     sample->angle_tick_us = angle_tick_us;
-    sample->status = FOC_ANGLE_STATUS_VALID;
 
     return true;
 }

@@ -31,16 +31,16 @@
 
 [region info]
 [load region] LR_IROM1
-	[execution region] ER_IROM1, 0x08000000, 0x00200000, 0x0000F1C0 [type] 2 [ID] 4
+	[execution region] ER_IROM1, 0x08000000, 0x00200000, 0x0000F3C8 [type] 2 [ID] 4
 
 	[execution region] DEV_REGION, 0x20000000, 0x00000200, 0x000000F0 [type] 1 [ID] 2
 
 	[execution region] DRV_REGION, 0x20000200, 0x00000200, 0x000000B4 [type] 1 [ID] 2
 
-	[execution region] RW_DTCM, 0x20000400, 0x0001FC00, 0x0000011C [type] 1 [ID] 2
+	[execution region] RW_DTCM, 0x20000400, 0x0001FC00, 0x00000134 [type] 1 [ID] 2
 
-	[execution region] RW_AXI_SRAM, 0x24000000, 0x00080000, 0x00001EB8 [type] 1 [ID] 3
-		[ZI block] addr: 0x240000D0, size: 0x00001DE8 (7656)
+	[execution region] RW_AXI_SRAM, 0x24000000, 0x00080000, 0x00001EE8 [type] 1 [ID] 3
+		[ZI block] addr: 0x24000100, size: 0x00001DE8 (7656)
 
 	[execution region] RW_D2_DMA, 0x30000000, 0x00048000, 0x00000008 [type] 3 [ID] 1
 
@@ -61,6 +61,7 @@
 [object name] bsp_pwm.o                 [path] ..\bsp\bsp_pwm.c
 [object name] bsp_spi.o                 [path] ..\bsp\bsp_spi.c
 [object name] bsp_uart.o                [path] ..\bsp\bsp_uart.c
+[object name] butter.o                  [path] ..\..\..\components\fp-sdk\utilities\butter\butter.c
 [object name] button.o                  [path] ..\..\..\components\fp-sdk\drivers\device\input\button.c
 [object name] cpu.o                     [path] ..\cpu\cpu.c
 [object name] dev_uart.o                [path] ..\..\..\components\fp-sdk\drivers\device\dev_uart.c
@@ -160,33 +161,35 @@
 [old name] fplog.o                   [type] 1   [path] ..\..\..\components\fp-sdk\utilities\fplog.c
 [old name] pingpong.o                [type] 1   [path] ..\..\..\components\fp-sdk\utilities\pingpong.c
 [old name] soft_timer.o              [type] 1   [path] ..\..\..\components\fp-sdk\utilities\soft_timer.c
+[old name] butter.o                  [type] 1   [path] ..\..\..\components\fp-sdk\utilities\butter\butter.c
 [old name] message_bus.o             [type] 1   [path] ..\..\..\components\fp-sdk\utilities\message_bus\message_bus.c
 [old name] vofa.o                    [type] 1   [path] ..\..\..\components\fp-sdk\packages\vofa\vofa.c
 [old name] tle5012b_sensor.o         [type] 1   [path] ..\..\..\components\fp-sdk\packages\tle5012b\tle5012b_sensor.c
 
 [record region info]
 [load region] LR_IROM1
-	[execution region] ER_IROM1, 0x08000000, 0x00200000, 0x0000F180 [type] 2 [ID] 4
+	[execution region] ER_IROM1, 0x08000000, 0x00200000, 0x0000F3C8 [type] 2 [ID] 4
 	[execution region] DEV_REGION, 0x20000000, 0x00000200, 0x000000F0 [type] 1 [ID] 2
 	[execution region] DRV_REGION, 0x20000200, 0x00000200, 0x000000B4 [type] 1 [ID] 2
-	[execution region] RW_DTCM, 0x20000400, 0x0001FC00, 0x0000011C [type] 1 [ID] 2
-	[execution region] RW_AXI_SRAM, 0x24000000, 0x00080000, 0x00001EB8 [type] 1 [ID] 3
+	[execution region] RW_DTCM, 0x20000400, 0x0001FC00, 0x00000134 [type] 1 [ID] 2
+	[execution region] RW_AXI_SRAM, 0x24000000, 0x00080000, 0x00001EE8 [type] 1 [ID] 3
 	[execution region] RW_D2_DMA, 0x30000000, 0x00048000, 0x00000008 [type] 3 [ID] 1
 -----------------------------------------------------------------------------------------------------------------------------------------
                                       FILE(s)                                     |         RAM (byte)       |       FLASH (byte)       |
 -----------------------------------------------------------------------------------------------------------------------------------------
 ..\..\..\components\fp-sdk\drivers\device\analog.c():                             |          68              |         478              |
-..\..\..\app\app_comm.c():                                                        |           8              |         138              |
-..\..\..\app\app_foc.c():                                                         |         284              |         910              |
+..\..\..\app\app_comm.c():                                                        |           8              |         158              |
+..\..\..\app\app_foc.c():                                                         |         308              |         994              |
 ..\..\..\app\app_key.c():                                                         |          56              |         330              |
 ..\..\..\app\app_msgbus.c():                                                      |          32              |          74              |
 ..\bsp\bsp_adc.c():                                                               |         298              |         756              |
-..\bsp\bsp_encoder.c():                                                           |          12              |         324              |
-..\bsp\bsp_foc.c():                                                               |         104              |         952              |
+..\bsp\bsp_encoder.c():                                                           |          12              |         316              |
+..\bsp\bsp_foc.c():                                                               |         152              |        1080              |
 ..\bsp\bsp_key.c():                                                               |         232              |         408              |
-..\bsp\bsp_pwm.c():                                                               |         244              |        1028              |
+..\bsp\bsp_pwm.c():                                                               |         244              |        1032              |
 ..\bsp\bsp_spi.c():                                                               |         248              |        1410              |
 ..\bsp\bsp_uart.c():                                                              |         304              |         820              |
+..\..\..\components\fp-sdk\utilities\butter\butter.c():                           |           0              |          46              |
 ..\..\..\components\fp-sdk\drivers\device\input\button.c():                       |          84              |        1530              |
 ..\cpu\cpu.c():                                                                   |          24              |         531              |
 ..\..\..\components\fp-sdk\drivers\device\dev_uart.c():                           |          76              |        1618              |
@@ -195,17 +198,17 @@
 ..\..\..\components\fp-sdk\motion\foc\control\foc_pi.c():                         |           0              |         186              |
 ..\..\..\components\fp-sdk\motion\foc\profile\foc_profile.c():                    |           0              |          84              |
 ..\..\..\components\fp-sdk\motion\foc\math\foc_svpwm.c():                         |           0              |         476              |
-..\..\..\components\fp-sdk\motion\foc\math\foc_transform.c():                     |           0              |         104              |
-..\..\..\components\fp-sdk\motion\foc\foc_zero_calibration.c():                   |           0  [NEW]       |         306  [NEW]       |
+..\..\..\components\fp-sdk\motion\foc\math\foc_transform.c():                     |           0              |         264              |
+..\..\..\components\fp-sdk\motion\foc\foc_zero_calibration.c():                   |           0              |         282              |
 ..\..\..\components\fp-sdk\utilities\fplog.c():                                   |         408              |         310              |
 ..\..\..\components\fp-sdk\utilities\heap.c():                                    |        4120              |         606              |
-..\..\..\app\logic_debug.c():                                                     |          12              |         162              |
-..\..\..\app\logic_foc_calibration.c():                                           |          40              |         468  [-252]      |
+..\..\..\app\logic_debug.c():                                                     |          12              |         174              |
+..\..\..\app\logic_foc_calibration.c():                                           |          40              |         456              |
 ..\..\..\app\logic_key.c():                                                       |          44              |         376              |
 ..\src\main.c():                                                                  |           0              |         114              |
 ..\..\..\components\fp-sdk\utilities\message_bus\message_bus.c():                 |           0              |        1096              |
 ..\..\..\components\fp-sdk\utilities\pingpong.c():                                |           0              |         188              |
-..\..\..\components\fp-sdk\motion\foc\pmsm_foc.c():                               |           0              |        1262              |
+..\..\..\components\fp-sdk\motion\foc\pmsm_foc.c():                               |           0              |        1386              |
 ..\..\..\components\fp-sdk\drivers\device\pwmc.c():                               |         108              |        3408              |
 ..\..\..\components\fp-sdk\utilities\soft_timer.c():                              |          28              |         690              |
 ..\..\..\components\fp-sdk\drivers\device\bus\spi_bus.c():                        |          44              |        1064              |
@@ -233,14 +236,14 @@ LR_IROM1
         SRAM 1               [0x20000000 | 0x00020000 (131072)]
                 DEV_REGION   [0x20000000]|¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö___________________________| (      240 /      512 )  46.9%  
                 DRV_REGION   [0x20000200]|¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö_________________________________| (      180 /      512 )  35.2%  
-                RW_DTCM      [0x20000400]|¡ö__________________________________________________| (      284 / 127.0 KB )   0.2%  
+                RW_DTCM      [0x20000400]|¡ö__________________________________________________| (      308 / 127.0 KB )   0.2%  
  
         SRAM 2               [0x24000000 | 0x00080000 (524288)]
                 [zi start] 1   [zi end] 0
                 RW_AXI_SRAM  [0x24000000]|¡ö__________________________________________________| (   7.7 KB / 512.0 KB )   1.5%  
  
         FLASH 1              [0x08000000 | 0x00200000 (2097152)]
-                ER_IROM1     [0x08000000]|¡ö_________________________________________________| (  60.4 KB /  2.00 MB )   3.0%  [+64]
+                ER_IROM1     [0x08000000]|¡ö_________________________________________________| (  60.9 KB /  2.00 MB )   3.0%  
  
         UNKNOWN
                 RW_D2_DMA    [0x30000000]|¡ö__________________________________________________| (        8 / 288.0 KB )   0.0%  
@@ -250,4 +253,4 @@ Maximum Stack Usage =        368 bytes + Unknown(Functions without stacksize, Cy
  
 =============================================================================================================================
 
-run time: 0.250 s
+run time: 0.323 s

@@ -22,7 +22,7 @@ Dialog DLL:      TCM.DLL V1.56.6.0
  
 <h2>Project:</h2>
 C:\Users\w1545\Desktop\Project\foc_pmsm_demo\armfly_foc_demo\board\armfly-v7\.mdk\mdk.uvprojx
-Project File Date:  03/31/2026
+Project File Date:  04/01/2026
 
 <h2>Output:</h2>
 *** Using Compiler 'V6.24', folder: 'C:\Users\w1545\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin'
@@ -30,9 +30,9 @@ Build target 'mdk'
 Before Build - User command #1: python ..\..\..\fbtools.py before
 执行构建前操作...
 [OK] 构建前操作完成
-compiling foc_zero_calibration.c...
+compiling app_foc.c...
 linking...
-Program Size: Code=60658 RO-data=1230 RW-data=920 ZI-data=7656  
+Program Size: Code=61178 RO-data=1230 RW-data=992 ZI-data=7656  
 FromELF: creating hex file...
 After Build - User command #1: python ..\..\..\fbtools.py after
 执行构建后操作...
@@ -48,17 +48,18 @@ After Build - User command #2: keil-build-viewer.exe
                                       FILE(s)                                     |         RAM (byte)       |       FLASH (byte)       |
 -----------------------------------------------------------------------------------------------------------------------------------------
 ..\..\..\components\fp-sdk\drivers\device\analog.c():                             |          68              |         478              |
-..\..\..\app\app_comm.c():                                                        |           8              |         138              |
-..\..\..\app\app_foc.c():                                                         |         284              |         910              |
+..\..\..\app\app_comm.c():                                                        |           8              |         158              |
+..\..\..\app\app_foc.c():                                                         |         308              |         994              |
 ..\..\..\app\app_key.c():                                                         |          56              |         330              |
 ..\..\..\app\app_msgbus.c():                                                      |          32              |          74              |
 ..\bsp\bsp_adc.c():                                                               |         298              |         756              |
-..\bsp\bsp_encoder.c():                                                           |          12              |         324              |
-..\bsp\bsp_foc.c():                                                               |         104              |         952              |
+..\bsp\bsp_encoder.c():                                                           |          12              |         316              |
+..\bsp\bsp_foc.c():                                                               |         152              |        1080              |
 ..\bsp\bsp_key.c():                                                               |         232              |         408              |
-..\bsp\bsp_pwm.c():                                                               |         244              |        1028              |
+..\bsp\bsp_pwm.c():                                                               |         244              |        1032              |
 ..\bsp\bsp_spi.c():                                                               |         248              |        1410              |
 ..\bsp\bsp_uart.c():                                                              |         304              |         820              |
+..\..\..\components\fp-sdk\utilities\butter\butter.c():                           |           0              |          46              |
 ..\..\..\components\fp-sdk\drivers\device\input\button.c():                       |          84              |        1530              |
 ..\cpu\cpu.c():                                                                   |          24              |         531              |
 ..\..\..\components\fp-sdk\drivers\device\dev_uart.c():                           |          76              |        1618              |
@@ -67,17 +68,17 @@ After Build - User command #2: keil-build-viewer.exe
 ..\..\..\components\fp-sdk\motion\foc\control\foc_pi.c():                         |           0              |         186              |
 ..\..\..\components\fp-sdk\motion\foc\profile\foc_profile.c():                    |           0              |          84              |
 ..\..\..\components\fp-sdk\motion\foc\math\foc_svpwm.c():                         |           0              |         476              |
-..\..\..\components\fp-sdk\motion\foc\math\foc_transform.c():                     |           0              |         104              |
-..\..\..\components\fp-sdk\motion\foc\foc_zero_calibration.c():                   |           0  [NEW]       |         306  [NEW]       |
+..\..\..\components\fp-sdk\motion\foc\math\foc_transform.c():                     |           0              |         264              |
+..\..\..\components\fp-sdk\motion\foc\foc_zero_calibration.c():                   |           0              |         282              |
 ..\..\..\components\fp-sdk\utilities\fplog.c():                                   |         408              |         310              |
 ..\..\..\components\fp-sdk\utilities\heap.c():                                    |        4120              |         606              |
-..\..\..\app\logic_debug.c():                                                     |          12              |         162              |
-..\..\..\app\logic_foc_calibration.c():                                           |          40              |         468  [-252]      |
+..\..\..\app\logic_debug.c():                                                     |          12              |         174              |
+..\..\..\app\logic_foc_calibration.c():                                           |          40              |         456              |
 ..\..\..\app\logic_key.c():                                                       |          44              |         376              |
 ..\src\main.c():                                                                  |           0              |         114              |
 ..\..\..\components\fp-sdk\utilities\message_bus\message_bus.c():                 |           0              |        1096              |
 ..\..\..\components\fp-sdk\utilities\pingpong.c():                                |           0              |         188              |
-..\..\..\components\fp-sdk\motion\foc\pmsm_foc.c():                               |           0              |        1262              |
+..\..\..\components\fp-sdk\motion\foc\pmsm_foc.c():                               |           0              |        1386              |
 ..\..\..\components\fp-sdk\drivers\device\pwmc.c():                               |         108              |        3408              |
 ..\..\..\components\fp-sdk\utilities\soft_timer.c():                              |          28              |         690              |
 ..\..\..\components\fp-sdk\drivers\device\bus\spi_bus.c():                        |          44              |        1064              |
@@ -105,13 +106,13 @@ LR_IROM1
         SRAM 1               [0x20000000 | 0x00020000 (131072)]
                 DEV_REGION   [0x20000000]|■■■■■■■■■■■■■■■■■■■■■■■___________________________| (      240 /      512 )  46.9%  
                 DRV_REGION   [0x20000200]|■■■■■■■■■■■■■■■■■_________________________________| (      180 /      512 )  35.2%  
-                RW_DTCM      [0x20000400]|■__________________________________________________| (      284 / 127.0 KB )   0.2%  
+                RW_DTCM      [0x20000400]|■__________________________________________________| (      308 / 127.0 KB )   0.2%  
  
         SRAM 2               [0x24000000 | 0x00080000 (524288)]
                 RW_AXI_SRAM  [0x24000000]|■__________________________________________________| (   7.7 KB / 512.0 KB )   1.5%  
  
         FLASH 1              [0x08000000 | 0x00200000 (2097152)]
-                ER_IROM1     [0x08000000]|■_________________________________________________| (  60.4 KB /  2.00 MB )   3.0%  [+64]
+                ER_IROM1     [0x08000000]|■_________________________________________________| (  60.9 KB /  2.00 MB )   3.0%  
  
         UNKNOWN
                 RW_D2_DMA    [0x30000000]|■__________________________________________________| (        8 / 288.0 KB )   0.0%  
@@ -131,7 +132,7 @@ Package Vendor: Keil
 <h2>Collection of Component include folders:</h2>
 
 <h2>Collection of Component Files used:</h2>
-Build Time Elapsed:  00:00:04
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>

@@ -9,12 +9,12 @@ Psi = 0.002188;   % 永磁体磁链 [Wb](60/(sqrt(3)*2*pi*Pn*KV)
 J   = 0.0001;     % 转动惯量 [kg*m^2]
 Pn  = 7;          % 极对数 (注意不是极数，是极对数)
 B   = 0.00001;    % 粘滞摩擦系数 [N*m*s] (通常设为0或者很小)
-Udc = 24;         % 母线电压[v]
+Udc = 12;         % 母线电压[v]
 %% 2. 初始条件
 w0      = 0;      % 初始机械转速 [rad/s]
 theta0  = 0;      % 初始电角度 [rad]
 
 %% 3. 控制器参数
-PWM_Freq = 10e3;  % 开关频率 [Hz]
+PWM_Freq = 8e3;  % 开关频率 [Hz]
 Ts      = 1/PWM_Freq;   % 开关周期 [s]
-current_loop_wc = 500; %电流环带宽[rad/s]
+current_loop_wc = 800; %电流环带宽[rad/s]

@@ -20,7 +20,7 @@
 /*---------- type define ----------*/
 enum app_protocol_foc_service_cmd {
     APP_PROTOCOL_FOC_SERVICE_CMD_CONTROL = 0,
-    APP_PROTOCOL_FOC_SERVICE_CMD_GET_PWM_DUTY,
+    APP_PROTOCOL_FOC_SERVICE_CMD_GET_REALTIME,
 };
 
 enum app_protocol_foc_control_cmd {
@@ -36,6 +36,17 @@ struct app_protocol_foc_pwm_duty {
     float duty_c;
 };
 
+struct app_protocol_foc_realtime {
+    float current_a_real;
+    float current_b_real;
+    float current_alpha_pu;
+    float current_beta_pu;
+    float current_d_pu;
+    float current_q_pu;
+    float duty_a;
+    float duty_b;
+};
+
 struct app_protocol_foc_service_req {
     enum app_protocol_foc_service_cmd cmd;
     union {
@@ -47,7 +58,7 @@ struct app_protocol_foc_service_req {
 
 struct app_protocol_foc_service_resp {
     union {
-        struct app_protocol_foc_pwm_duty pwm_duty;
+        struct app_protocol_foc_realtime foc_realtime;
     } data;
 };
 

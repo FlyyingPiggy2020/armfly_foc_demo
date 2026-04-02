@@ -55,6 +55,7 @@
 ".\objects\fplog.o"
 ".\objects\pingpong.o"
 ".\objects\soft_timer.o"
+".\objects\butter.o"
 ".\objects\message_bus.o"
 ".\objects\vofa.o"
 ".\objects\tle5012b_sensor.o"

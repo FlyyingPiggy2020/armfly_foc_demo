@@ -49,19 +49,24 @@ bool app_comm_init(void)
     return true;
 }
 
-bool app_comm_send_foc_pwm_duty(const struct app_protocol_foc_pwm_duty *duty)
+bool app_comm_send_foc_realtime(const struct app_protocol_foc_realtime *realtime)
 {
-    float values[3];
+    float values[8];
 
-    if ((!g_app_comm.is_init) || (g_app_comm.uart_dev == NULL) || (duty == NULL)) {
+    if ((!g_app_comm.is_init) || (g_app_comm.uart_dev == NULL) || (realtime == NULL)) {
         return false;
     }
 
-    values[0] = duty->duty_a;
-    values[1] = duty->duty_b;
-    values[2] = duty->duty_c;
+    values[0] = realtime->current_a_real;
+    values[1] = realtime->current_b_real;
+    values[2] = realtime->current_alpha_pu;
+    values[3] = realtime->current_beta_pu;
+    values[4] = realtime->current_d_pu;
+    values[5] = realtime->current_q_pu;
+    values[6] = realtime->duty_a;
+    values[7] = realtime->duty_b;
 
-    return (vofa_send(values, 3U) == 0);
+    return (vofa_send(values, 8U) == 0);
 }
 
 void app_comm_process(void)

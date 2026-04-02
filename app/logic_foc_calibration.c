@@ -139,8 +139,9 @@ void logic_foc_calibration_process(void)
                 break;
             }
 
-            foc->hal_ops.get_mechanical_angle(foc->hal_user_data, (uint32_t)(tick_now * 1000ULL), &mechanical_sample);
-            if (!foc_zero_calibration_is_mechanical_sample_valid(&mechanical_sample)) {
+            if (!foc->hal_ops.get_mechanical_angle(foc->hal_user_data,
+                                                   (uint32_t)(tick_now * 1000ULL),
+                                                   &mechanical_sample)) {
                 _logic_foc_calibration_enter_failed("read encoder angle failed");
                 break;
             }

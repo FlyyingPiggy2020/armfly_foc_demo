@@ -74,6 +74,13 @@ void *foc_port_get_hal_user_data(void);
  * @return true=注册成功, false=注册失败
  */
 bool foc_port_register_current_loop_irq(int32_t (*irq_handler)(uint32_t irq, void *args, uint32_t length));
+
+/**
+ * @brief  停机状态下更新三相电流零飘滤波值
+ * @note   仅在应用层判定电机停机且未处于电角度标定时调用
+ * @return true=更新成功, false=更新失败
+ */
+bool foc_port_update_current_zero_drift_sample(void);
 /*---------- end of file ----------*/
 #ifdef __cplusplus
 }

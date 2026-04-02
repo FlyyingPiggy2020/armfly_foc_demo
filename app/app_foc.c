@@ -4,7 +4,7 @@
  * @Author       : Codex
  * @Date         : 2026-03-17 15:55:00
  * @LastEditors  : lxf_zjnb@qq.com
- * @LastEditTime : 2026-03-27 16:57:42
+ * @LastEditTime : 2026-04-01 12:45:08
  * @Brief        : FOC 应用层实现
  */
 
@@ -14,10 +14,13 @@
 #include "app_msgbus.h"
 #include "app_protocol.h"
 #include "logic_foc_calibration.h"
+#include "pmsm_foc.h"
 #include <string.h>
 /*---------- macro ----------*/
 #define APP_FOC_DEFAULT_SPEED_REF 300.0f
 #define APP_FOC_SPEED_STEP        100.0f
+#define APP_FOC_LOCK_ID_REF       0.0f
+#define APP_FOC_LOCK_IQ_REF       0.06f
 #define APP_FOC_NODE_NAME         "foc"
 /*---------- type define ----------*/
 /*---------- variable prototype ----------*/
@@ -60,9 +63,15 @@ static int32_t _app_foc_current_loop_irq(uint32_t irq, void *args, uint32_t leng
     (void)args;
     (void)length;
 
-    /* 停机和标定阶段不进入电流环，避免无效模式刷日志。 */
-    if (!g_app_foc.is_started || logic_foc_calibration_is_active()) {
-        return E_OK;
+    /* 标定阶段暂停零飘更新，避免注入电流污染零偏。 */
+    if (logic_foc_calibration_is_active()) {
+        return pmsm_foc_update_current_feedback(&g_app_foc.foc) ? E_OK : E_ERROR;
+    }
+
+    /* 停机阶段持续更新零飘，同时保持调试观测量持续刷新。 */
+    if (!g_app_foc.is_started) {
+        (void)foc_port_update_current_zero_drift_sample();
+        return pmsm_foc_update_current_feedback(&g_app_foc.foc) ? E_OK : E_ERROR;
     }
 
     /* ADC DMA 回调只负责触发一次电流环计算。 */
@@ -111,14 +120,19 @@ static int32_t _app_foc_service_handler(
                     return -MSGBUS_ERR_INVALID_ARGS;
             }
             break;
-        case APP_PROTOCOL_FOC_SERVICE_CMD_GET_PWM_DUTY:
+        case APP_PROTOCOL_FOC_SERVICE_CMD_GET_REALTIME:
             if ((service_resp == NULL) || (resp_size == NULL) || (*resp_size < sizeof(*service_resp))) {
                 return -MSGBUS_ERR_INVALID_ARGS;
             }
 
-            service_resp->data.pwm_duty.duty_a = g_app_foc.foc.runtime.pwm_duty.duty_a;
-            service_resp->data.pwm_duty.duty_b = g_app_foc.foc.runtime.pwm_duty.duty_b;
-            service_resp->data.pwm_duty.duty_c = g_app_foc.foc.runtime.pwm_duty.duty_c;
+            service_resp->data.foc_realtime.current_a_real = g_app_foc.foc.runtime.current_sample.a_real;
+            service_resp->data.foc_realtime.current_b_real = g_app_foc.foc.runtime.current_sample.b_real;
+            service_resp->data.foc_realtime.current_alpha_pu = g_app_foc.foc.runtime.current_meas_ab.alpha;
+            service_resp->data.foc_realtime.current_beta_pu = g_app_foc.foc.runtime.current_meas_ab.beta;
+            service_resp->data.foc_realtime.current_d_pu = g_app_foc.foc.runtime.current_meas_dq.d;
+            service_resp->data.foc_realtime.current_q_pu = g_app_foc.foc.runtime.current_meas_dq.q;
+            service_resp->data.foc_realtime.duty_a = g_app_foc.foc.runtime.pwm_duty.duty_a;
+            service_resp->data.foc_realtime.duty_b = g_app_foc.foc.runtime.pwm_duty.duty_b;
             *resp_size = sizeof(*service_resp);
             break;
         default:
@@ -201,22 +215,18 @@ void app_foc_motor_switch(void)
     }
 
     if (!g_app_foc.is_started) {
-        if (!g_app_foc.foc.runtime.electrical_zero_valid) {
-            xlog_count("app_foc: reject motor start, electrical zero not calibrated\r\n");
-            return;
-        }
-
-        pmsm_foc_start(&g_app_foc.foc, FOC_MODE_SPEED);
-        if (g_app_foc.foc.runtime.mode != FOC_MODE_SPEED) {
+        pmsm_foc_start(&g_app_foc.foc, FOC_MODE_CURRENT);
+        if (g_app_foc.foc.runtime.mode != FOC_MODE_CURRENT) {
             xlog_count("app_foc: motor start failed\r\n");
             return;
         }
 
         g_app_foc.is_started = true;
-        pmsm_foc_set_speed_ref(&g_app_foc.foc, g_app_foc.speed_ref);
-        /* 当前工程还没有独立速度环调度，这里在改目标时同步跑一次速度 PI。 */
-        pmsm_foc_speed_loop(&g_app_foc.foc);
-        xlog_count("app_foc: motor start speed_ref=%.1f\r\n", (double)g_app_foc.speed_ref);
+        pmsm_foc_set_current_ref(&g_app_foc.foc, APP_FOC_LOCK_ID_REF, APP_FOC_LOCK_IQ_REF);
+        // pmsm_foc_set_speed_ref(&g_app_foc.foc, g_app_foc.speed_ref);
+        ///* 当前工程还没有独立速度环调度，这里在改目标时同步跑一次速度 PI。 */
+        // pmsm_foc_speed_loop(&g_app_foc.foc);
+        // xlog_count("app_foc: motor start speed_ref=%.1f\r\n", (double)g_app_foc.speed_ref);
         return;
     }
 

@@ -740,6 +740,11 @@
               <FilePath>..\..\..\components\fp-sdk\utilities\soft_timer.c</FilePath>
             </File>
             <File>
+              <FileName>butter.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\fp-sdk\utilities\butter\butter.c</FilePath>
+            </File>
+            <File>
               <FileName>message_bus.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\fp-sdk\utilities\message_bus\message_bus.c</FilePath>
