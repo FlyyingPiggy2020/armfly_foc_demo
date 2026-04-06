@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2026 by Lu Xianfan.
+ * Copyright (c) 2025 by Lu Xianfan.
  * @FilePath     : bsp_encoder.c
- * @Author       : Codex
- * @Date         : 2026-03-25 10:30:00
+ * @Author       : lxf
+ * @Date         : 2026-04-02 16:20:00
  * @LastEditors  : lxf_zjnb@qq.com
- * @LastEditTime : 2026-03-25 10:30:00
+ * @LastEditTime : 2026-04-02 16:20:00
  * @Brief        : armfly-v7 板级磁编码器实时获取实现
  */
 
@@ -22,22 +22,22 @@ struct bsp_encoder_ctx {
     bool is_ready;
 };
 /*---------- variable prototype ----------*/
-static foc_angle_t _bsp_encoder_wrap_angle_deg(foc_angle_t angle);
+static float _bsp_encoder_wrap_angle_deg(float angle_deg);
 static bool _bsp_encoder_read_angle_data(struct tle5012b_angle_data *angle_data);
 /*---------- function prototype ----------*/
 /*---------- variable ----------*/
 static struct bsp_encoder_ctx g_bsp_encoder_ctx = { 0 };
 /*---------- function ----------*/
-static foc_angle_t _bsp_encoder_wrap_angle_deg(foc_angle_t angle)
+static float _bsp_encoder_wrap_angle_deg(float angle_deg)
 {
-    while (angle >= 360.0f) {
-        angle -= 360.0f;
+    while (angle_deg >= 360.0f) {
+        angle_deg -= 360.0f;
     }
-    while (angle < 0.0f) {
-        angle += 360.0f;
+    while (angle_deg < 0.0f) {
+        angle_deg += 360.0f;
     }
 
-    return angle;
+    return angle_deg;
 }
 
 static bool _bsp_encoder_read_angle_data(struct tle5012b_angle_data *angle_data)
@@ -76,7 +76,7 @@ int bsp_encoder_init(void)
     return E_OK;
 }
 
-bool bsp_encoder_get_mechanical_angle_deg(foc_angle_t *mechanical_angle_deg)
+bool bsp_encoder_get_mechanical_angle_deg(float *mechanical_angle_deg)
 {
     struct tle5012b_angle_data angle_data = { 0 };
 
@@ -92,30 +92,22 @@ bool bsp_encoder_get_mechanical_angle_deg(foc_angle_t *mechanical_angle_deg)
     return true;
 }
 
-bool bsp_encoder_get_mechanical_angle_sample(uint32_t target_tick_us, foc_mechanical_angle_sample_t *sample)
+bool bsp_encoder_get_mechanical_angle_sample(struct foc_mechanical_sample *sample)
 {
     struct tle5012b_angle_data angle_data = { 0 };
-    uint32_t angle_tick_us = 0U;
 
     if (sample == NULL) {
         return false;
     }
 
-    *sample = (foc_mechanical_angle_sample_t){ 0 };
+    *sample = (struct foc_mechanical_sample){ 0 };
 
     if (!_bsp_encoder_read_angle_data(&angle_data)) {
         return false;
     }
 
-    if (target_tick_us != 0U) {
-        angle_tick_us = target_tick_us;
-    } else {
-        angle_tick_us = (uint32_t)(tick_get() * 1000ULL);
-    }
-
-    sample->mechanical_angle = _bsp_encoder_wrap_angle_deg(angle_data.mechanical_angle_deg);
-    sample->mechanical_speed = 0.0f;
-    sample->angle_tick_us = angle_tick_us;
+    sample->angle_deg = _bsp_encoder_wrap_angle_deg(angle_data.mechanical_angle_deg);
+    sample->speed_deg_s = 0.0f;
 
     return true;
 }

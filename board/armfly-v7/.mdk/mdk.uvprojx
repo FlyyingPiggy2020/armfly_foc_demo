@@ -340,7 +340,7 @@
               <MiscControls>-std=c11</MiscControls>
               <Define>USE_HAL_DRIVER,STM32H743xx,FP_INCLDUE_BOARD_OPTIONS_FILE,FOC_OPTIONS_FILE,CONFIG_HEAP_TYPE=1,FOC_INCLDUE_BOARD_OPTIONS_FILE</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\app;..\src;..\cpu\inc;..\config;..\bsp;..\..\..\components\fp-sdk\inc;..\..\..\components\fp-sdk\drivers\core;..\..\..\components\fp-sdk\drivers\device\bus;..\..\..\components\fp-sdk\drivers\device;..\..\..\components\fp-sdk\drivers\device\input;..\..\..\components\fp-sdk\drivers\device\storage;..\..\..\components\fp-sdk\drivers\device\sensor;..\..\..\components\fp-sdk\packages;..\..\..\components\fp-sdk\utilities;..\..\..\components\fp-sdk\utilities\message_bus;..\..\..\components\fp-sdk\motion\foc;..\..\..\components\fp-sdk\motion\foc\math;..\..\..\components\fp-sdk\motion\foc\control;..\..\..\components\fp-sdk\motion\foc\profile;..\..\..\lib\STMicroelectronics\stm32h7xx\arch\inc;..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\inc;..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\inc\Legacy</IncludePath>
+              <IncludePath>..\..\..\app;..\src;..\cpu\inc;..\config;..\bsp;..\..\..\components\fp-sdk\inc;..\..\..\components\fp-sdk\drivers\core;..\..\..\components\fp-sdk\drivers\device\bus;..\..\..\components\fp-sdk\drivers\device;..\..\..\components\fp-sdk\drivers\device\input;..\..\..\components\fp-sdk\drivers\device\storage;..\..\..\components\fp-sdk\drivers\device\sensor;..\..\..\components\fp-sdk\packages;..\..\..\components\fp-sdk\utilities;..\..\..\components\fp-sdk\utilities\message_bus;..\..\..\components\fp-sdk\motion\foc;..\..\..\components\fp-sdk\motion\foc\math;..\..\..\components\fp-sdk\motion\foc\control\pi;..\..\..\lib\STMicroelectronics\stm32h7xx\arch\inc;..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\inc;..\..\..\lib\STMicroelectronics\stm32h7xx\peripheral\inc\Legacy</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -413,11 +413,6 @@
               <FileName>logic_debug.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\app\logic_debug.c</FilePath>
-            </File>
-            <File>
-              <FileName>logic_foc_calibration.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\app\logic_foc_calibration.c</FilePath>
             </File>
             <File>
               <FileName>app_msgbus.c</FileName>
@@ -668,6 +663,57 @@
               <FileName>button.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\fp-sdk\drivers\device\input\button.c</FilePath>
+              <FileOption>
+                <CommonProperty>
+                  <UseCPPCompiler>2</UseCPPCompiler>
+                  <RVCTCodeConst>0</RVCTCodeConst>
+                  <RVCTZI>0</RVCTZI>
+                  <RVCTOtherData>0</RVCTOtherData>
+                  <ModuleSelection>0</ModuleSelection>
+                  <IncludeInBuild>2</IncludeInBuild>
+                  <AlwaysBuild>2</AlwaysBuild>
+                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
+                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
+                  <PublicsOnly>2</PublicsOnly>
+                  <StopOnExitCode>11</StopOnExitCode>
+                  <CustomArgument></CustomArgument>
+                  <IncludeLibraryModules></IncludeLibraryModules>
+                  <ComprImg>1</ComprImg>
+                </CommonProperty>
+                <FileArmAds>
+                  <Cads>
+                    <interw>2</interw>
+                    <Optim>1</Optim>
+                    <oTime>2</oTime>
+                    <SplitLS>2</SplitLS>
+                    <OneElfS>2</OneElfS>
+                    <Strict>2</Strict>
+                    <EnumInt>2</EnumInt>
+                    <PlainCh>2</PlainCh>
+                    <Ropi>2</Ropi>
+                    <Rwpi>2</Rwpi>
+                    <wLevel>0</wLevel>
+                    <uThumb>2</uThumb>
+                    <uSurpInc>2</uSurpInc>
+                    <uC99>2</uC99>
+                    <uGnu>2</uGnu>
+                    <useXO>2</useXO>
+                    <v6Lang>0</v6Lang>
+                    <v6LangP>0</v6LangP>
+                    <vShortEn>2</vShortEn>
+                    <vShortWch>2</vShortWch>
+                    <v6Lto>2</v6Lto>
+                    <v6WtE>2</v6WtE>
+                    <v6Rtti>2</v6Rtti>
+                    <VariousControls>
+                      <MiscControls></MiscControls>
+                      <Define></Define>
+                      <Undefine></Undefine>
+                      <IncludePath></IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
             <File>
               <FileName>dev_uart.c</FileName>
@@ -685,34 +731,19 @@
           <GroupName>fp-sdk/motion/foc</GroupName>
           <Files>
             <File>
-              <FileName>pmsm_foc.c</FileName>
+              <FileName>foc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\fp-sdk\motion\foc\pmsm_foc.c</FilePath>
+              <FilePath>..\..\..\components\fp-sdk\motion\foc\foc.c</FilePath>
             </File>
             <File>
-              <FileName>foc_zero_calibration.c</FileName>
+              <FileName>foc_math.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\fp-sdk\motion\foc\foc_zero_calibration.c</FilePath>
-            </File>
-            <File>
-              <FileName>foc_transform.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\fp-sdk\motion\foc\math\foc_transform.c</FilePath>
-            </File>
-            <File>
-              <FileName>foc_svpwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\fp-sdk\motion\foc\math\foc_svpwm.c</FilePath>
+              <FilePath>..\..\..\components\fp-sdk\motion\foc\math\foc_math.c</FilePath>
             </File>
             <File>
               <FileName>foc_pi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\fp-sdk\motion\foc\control\foc_pi.c</FilePath>
-            </File>
-            <File>
-              <FileName>foc_profile.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\fp-sdk\motion\foc\profile\foc_profile.c</FilePath>
+              <FilePath>..\..\..\components\fp-sdk\motion\foc\control\pi\foc_pi.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -39,12 +39,12 @@ struct app_protocol_foc_pwm_duty {
 struct app_protocol_foc_realtime {
     float current_a_real;
     float current_b_real;
-    float current_alpha_pu;
-    float current_beta_pu;
     float current_d_pu;
     float current_q_pu;
-    float duty_a;
-    float duty_b;
+    float voltage_d_pu;
+    float voltage_q_pu;
+    float mechanical_angle_deg;
+    float electrical_angle_deg;
 };
 
 struct app_protocol_foc_service_req {

@@ -3,8 +3,8 @@
  * @FilePath     : logic_key.c
  * @Author       : Codex
  * @Date         : 2026-03-21 09:30:00
- * @LastEditors  : Codex
- * @LastEditTime : 2026-03-24 11:05:00
+ * @LastEditors  : lxf_zjnb@qq.com
+ * @LastEditTime : 2026-04-03 15:41:16
  * @Brief        : 按键逻辑映射层
  */
 
@@ -21,8 +21,6 @@ struct logic_key_ctx {
     struct msgbus_node node;
     msgbus_topic_t key_topic;
     msgbus_service_t foc_service;
-    bool k1_is_pressed;
-    bool k1_long_triggered;
     bool is_init;
 };
 /*---------- variable prototype ----------*/
@@ -61,26 +59,18 @@ static void _logic_key_on_key_event(
 
     switch (event->code) {
         case APP_KEY_DOWN_K1:
-            g_logic_key.k1_is_pressed = true;
-            g_logic_key.k1_long_triggered = false;
+
             break;
-        case APP_KEY_UP_K1:
-            if (g_logic_key.k1_is_pressed && !g_logic_key.k1_long_triggered) {
-                _logic_key_send_foc_command(APP_PROTOCOL_FOC_CONTROL_CMD_MOTOR_SWITCH);
-            }
-            g_logic_key.k1_is_pressed = false;
-            g_logic_key.k1_long_triggered = false;
+        case APP_KEY_SHORT_UP_K1:
+            _logic_key_send_foc_command(APP_PROTOCOL_FOC_CONTROL_CMD_MOTOR_SWITCH);
             break;
         case APP_KEY_LONG_K1:
-            if (g_logic_key.k1_is_pressed) {
-                _logic_key_send_foc_command(APP_PROTOCOL_FOC_CONTROL_CMD_CALIBRATE_ELECTRICAL_ZERO);
-                g_logic_key.k1_long_triggered = true;
-            }
+            _logic_key_send_foc_command(APP_PROTOCOL_FOC_CONTROL_CMD_CALIBRATE_ELECTRICAL_ZERO);
             break;
-        case APP_KEY_DOWN_K2:
+        case APP_KEY_SHORT_UP_K2:
             _logic_key_send_foc_command(APP_PROTOCOL_FOC_CONTROL_CMD_SPEED_INC);
             break;
-        case APP_KEY_DOWN_K3:
+        case APP_KEY_SHORT_UP_K3:
             _logic_key_send_foc_command(APP_PROTOCOL_FOC_CONTROL_CMD_SPEED_DEC);
             break;
         default:

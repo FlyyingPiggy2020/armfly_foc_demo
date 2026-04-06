@@ -59,12 +59,12 @@ bool app_comm_send_foc_realtime(const struct app_protocol_foc_realtime *realtime
 
     values[0] = realtime->current_a_real;
     values[1] = realtime->current_b_real;
-    values[2] = realtime->current_alpha_pu;
-    values[3] = realtime->current_beta_pu;
-    values[4] = realtime->current_d_pu;
-    values[5] = realtime->current_q_pu;
-    values[6] = realtime->duty_a;
-    values[7] = realtime->duty_b;
+    values[2] = realtime->current_d_pu;
+    values[3] = realtime->current_q_pu;
+    values[4] = realtime->voltage_d_pu;
+    values[5] = realtime->voltage_q_pu;
+    values[6] = realtime->mechanical_angle_deg;
+    values[7] = realtime->electrical_angle_deg;
 
     return (vofa_send(values, 8U) == 0);
 }
