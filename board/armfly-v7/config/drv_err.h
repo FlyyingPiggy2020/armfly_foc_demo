@@ -19,12 +19,12 @@ extern "C" {
 #include "misc.h"
 /*---------- macro ----------*/
 #ifndef ASSERT
-#define ASSERT(expr)                 \
-    do {                             \
-        if (!(expr)) {               \
-            while (1) {              \
-            }                        \
-        }                            \
+#define ASSERT(expr)    \
+    do {                \
+        if (!(expr)) {  \
+            while (1) { \
+            }           \
+        }               \
     } while (0)
 #endif
 

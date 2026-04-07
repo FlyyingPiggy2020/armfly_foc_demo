@@ -29,13 +29,13 @@ extern "C" {
 #define __ms2ticks(ms)              (ms)
 
 #ifndef ASSERT
-#define ASSERT(expr)                                      \
-    do {                                                  \
-        if (!(expr)) {                                    \
+#define ASSERT(expr)                                              \
+    do {                                                          \
+        if (!(expr)) {                                            \
             xlog_cout("ASSERT in %s:%d\r\n", __FILE__, __LINE__); \
-            while (1) {                                   \
-            }                                             \
-        }                                                 \
+            while (1) {                                           \
+            }                                                     \
+        }                                                         \
     } while (0)
 #endif
 
@@ -44,12 +44,12 @@ extern "C" {
 // <h> FP-SDK功能配置
 //
 //   <e> 日志功能是否开启
-#define CONFIG_FPLOG                1
+#define CONFIG_FPLOG           1
 //   </e>
 //
 //   <e> 动态内存管理
 //   <o> 动态内存池大小
-#define CONFIG_HEAP_TOTAL_SIZE      4096
+#define CONFIG_HEAP_TOTAL_SIZE 4096
 //   </e>
 //
 // </h>

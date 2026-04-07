@@ -44,7 +44,7 @@ iq_ki_pu = r_pu * current_wc_pu * ts_pu;
 
 % 零飘在线滤波器(停机零偏估计)参数设计
 zero_drift_filter_fs = switch_freq_hz_real; % Hz, 与电流采样频率一致
-zero_drift_filter_fc = 2000;                  % Hz, 一阶低通截止频率
+zero_drift_filter_fc = 1000;                  % Hz, 一阶低通截止频率
 zero_drift_filter_order = 1;
 [zero_drift_b, zero_drift_a] = butter(zero_drift_filter_order, ...
     zero_drift_filter_fc/(zero_drift_filter_fs/2), ...

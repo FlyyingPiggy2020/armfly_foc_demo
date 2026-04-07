@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2026 by Lu Xianfan.
- * @FilePath     : board/armfly-v7/bsp/bsp_pwm.c
+ * @FilePath     : bsp_pwm.c
  * @Author       : Codex
  * @Date         : 2026-03-18 13:20:00
  * @LastEditors  : lxf_zjnb@qq.com
- * @LastEditTime : 2026-03-19 14:33:33
+ * @LastEditTime : 2026-04-03 14:51:14
  * @Brief        : armfly-v7 电机 PWM 设备实现
  */
 
@@ -15,12 +15,14 @@
 #include "pwmc.h"
 #include "stdbool.h"
 #include "stm32h7xx_hal.h"
+#include "stm32h7xx_hal_tim.h"
 
 /*---------- macro ----------*/
 /*---------- type define ----------*/
 /*---------- variable prototype ----------*/
 static bool _motor_pwm_init(void);
 static int32_t _motor_pwm_update_crr(uint8_t channel, uint32_t crr);
+static bool _motor_enable(bool ctrl);
 /*---------- function prototype ----------*/
 
 static void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
@@ -42,6 +44,7 @@ static pwmc_describe_t s_motor_pwm_desc = {
     .ops = {
         .init = _motor_pwm_init,
         .update_crr = _motor_pwm_update_crr,
+        .enable = _motor_enable,
     },
 };
 
@@ -92,7 +95,7 @@ static bool _motor_pwm_init(void)
     if (HAL_TIMEx_MasterConfigSynchronization(&htim1, &sMasterConfig) != HAL_OK) {
         return false;
     }
-    sConfigOC.OCMode = TIM_OCMODE_PWM2;
+    sConfigOC.OCMode = TIM_OCMODE_PWM1;
     sConfigOC.Pulse = 0;
     sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
     sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
@@ -108,7 +111,7 @@ static bool _motor_pwm_init(void)
     if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_3) != HAL_OK) {
         return false;
     }
-    sConfigOC.OCMode = TIM_OCMODE_PWM1;
+    sConfigOC.OCMode = TIM_OCMODE_PWM2;
     if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_4) != HAL_OK) {
         return false;
     }
@@ -129,31 +132,19 @@ static bool _motor_pwm_init(void)
 
     HAL_TIM_MspPostInit(&htim1);
 
-    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 6250); /* 50%占空比 */
-    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 6250); /* 50%占空比 */
-    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 6250); /* 50%占空比 */
-    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_4, 300);  /* TRGO触发点 */
+    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 6250);  /* 50%占空比 */
+    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 6250);  /* 50%占空比 */
+    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 6250);  /* 50%占空比 */
+    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_4, 12499); /* TRGO触发点 */
 
-    if (HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1) != HAL_OK) {
-        return false;
-    }
-    if (HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2) != HAL_OK) {
-        return false;
-    }
-    if (HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3) != HAL_OK) {
-        return false;
-    }
+    /* 目前在这个电路的配置未实现高阻态，无法实现自由滑行 */
+    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
+    // HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
+    // HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
+    // HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_3);
     if (HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4) != HAL_OK) {
-        return false;
-    }
-
-    if (HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1) != HAL_OK) {
-        return false;
-    }
-    if (HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2) != HAL_OK) {
-        return false;
-    }
-    if (HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_3) != HAL_OK) {
         return false;
     }
     return true;
@@ -177,11 +168,31 @@ static int32_t _motor_pwm_update_crr(uint8_t channel, uint32_t crr)
             break;
         default:
             return E_WRONG_ARGS;
-    }      
+    }
 
     return E_OK;
 }
 
+static bool _motor_enable(bool ctrl)
+{
+    if (ctrl) {
+        HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+        HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+        HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
+        HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
+        HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
+        HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_3);
+
+    } else {
+        HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
+        HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
+        HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_3);
+        HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_1);
+        HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_2);
+        HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_3);
+    }
+    return true;
+}
 void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim_pwm)
 {
     if (htim_pwm->Instance == TIM1) {

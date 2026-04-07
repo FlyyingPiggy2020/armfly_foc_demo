@@ -1,26 +1,35 @@
 /*
  * Copyright (c) 2026 by Lu Xianfan.
  * @FilePath     : app_foc.c
- * @Author       : Codex
+ * @Author       : lxf
  * @Date         : 2026-03-17 15:55:00
  * @LastEditors  : lxf_zjnb@qq.com
- * @LastEditTime : 2026-03-27 16:57:42
+ * @LastEditTime : 2026-04-06 10:47:04
  * @Brief        : FOC 应用层实现
  */
 
 /*---------- includes ----------*/
+#include "foc.h"
+#include "foc_types.h"
 #include "options.h"
 #include "app_foc.h"
 #include "app_msgbus.h"
 #include "app_protocol.h"
-#include "logic_foc_calibration.h"
+#include "bsp_foc.h"
+#include "message_bus.h"
 #include <string.h>
 /*---------- macro ----------*/
-#define APP_FOC_DEFAULT_SPEED_REF              300.0f
-#define APP_FOC_SPEED_STEP                     100.0f
-#define APP_FOC_NODE_NAME                      "foc"
+#define APP_FOC_NODE_NAME "foc"
 /*---------- type define ----------*/
+struct app_foc_ctx {
+    struct foc_motor foc;
+    struct msgbus_node node;
+    msgbus_service_t foc_service;
+    foc_scalar_t current_ref;
+    foc_scalar_t speed_ref;
+};
 /*---------- variable prototype ----------*/
+static bool _app_foc_is_running_mode(enum foc_mode mode);
 /*---------- function prototype ----------*/
 /**
  * @brief  ADC 电流环中断入口
@@ -45,8 +54,13 @@ static int32_t _app_foc_service_handler(
     msgbus_node_t node, const void *req, uint32_t req_size, void *resp, uint32_t *resp_size, void *user_data);
 /*---------- variable ----------*/
 /* 应用层统一持有 FOC 实例和运行态。 */
-app_foc_t g_app_foc __attribute__((section(".dtcm_data")));
+struct app_foc_ctx g_app_foc __attribute__((section(".dtcm_data")));
 /*---------- function ----------*/
+static bool _app_foc_is_running_mode(enum foc_mode mode)
+{
+    return (mode == FOC_MODE_CURRENT) || (mode == FOC_MODE_SPEED);
+}
+
 /**
  * @brief  ADC 电流环中断入口
  * @param  irq: 中断号
@@ -60,13 +74,11 @@ static int32_t _app_foc_current_loop_irq(uint32_t irq, void *args, uint32_t leng
     (void)args;
     (void)length;
 
-    /* 停机和标定阶段不进入电流环，避免无效模式刷日志。 */
-    if (!g_app_foc.is_started || logic_foc_calibration_is_active()) {
-        return E_OK;
+    if (!foc_run_fast(&g_app_foc.foc)) {
+        return E_ERROR;
     }
 
-    /* ADC DMA 回调只负责触发一次电流环计算。 */
-    return pmsm_foc_current_loop(&g_app_foc.foc) ? E_OK : E_ERROR;
+    return E_OK;
 }
 
 /**
@@ -105,20 +117,17 @@ static int32_t _app_foc_service_handler(
                     app_foc_speed_dec();
                     break;
                 case APP_PROTOCOL_FOC_CONTROL_CMD_CALIBRATE_ELECTRICAL_ZERO:
-                    logic_foc_calibration_request_start();
+                    foc_command_align(&g_app_foc.foc);
                     break;
                 default:
                     return -MSGBUS_ERR_INVALID_ARGS;
             }
             break;
-        case APP_PROTOCOL_FOC_SERVICE_CMD_GET_PWM_DUTY:
+        case APP_PROTOCOL_FOC_SERVICE_CMD_GET_REALTIME:
             if ((service_resp == NULL) || (resp_size == NULL) || (*resp_size < sizeof(*service_resp))) {
                 return -MSGBUS_ERR_INVALID_ARGS;
             }
-
-            service_resp->data.pwm_duty.duty_a = g_app_foc.foc.runtime.pwm_duty.duty_a;
-            service_resp->data.pwm_duty.duty_b = g_app_foc.foc.runtime.pwm_duty.duty_b;
-            service_resp->data.pwm_duty.duty_c = g_app_foc.foc.runtime.pwm_duty.duty_c;
+            memset(&service_resp->data.foc_realtime, 0, sizeof(service_resp->data.foc_realtime));
             *resp_size = sizeof(*service_resp);
             break;
         default:
@@ -151,14 +160,8 @@ bool app_foc_init(void)
         return false;
     }
 
-    if (!pmsm_foc_init(&g_app_foc.foc,
-                       foc_port_get_motor_profile(),
-                       foc_port_get_power_stage_profile(),
-                       foc_port_get_sensor_profile(),
-                       foc_port_get_ctrl_cfg(),
-                       foc_port_get_hal_ops(),
-                       foc_port_get_hal_user_data())) {
-        xlog_count("app_foc_init: pmsm_foc_init failed\r\n");
+    if (!foc_init(&g_app_foc.foc, foc_port_get_config(), foc_port_get_port(), foc_port_get_port_ctx())) {
+        xlog_count("app_foc_init: foc_init failed\r\n");
         msgbus_node_deinit(&g_app_foc.node);
         memset(&g_app_foc.node, 0, sizeof(g_app_foc.node));
         return false;
@@ -182,97 +185,94 @@ bool app_foc_init(void)
         return false;
     }
 
-    g_app_foc.speed_ref = APP_FOC_DEFAULT_SPEED_REF;
-    g_app_foc.is_started = false;
-    pmsm_foc_clear_electrical_zero_offset(&g_app_foc.foc);
-
+    g_app_foc.speed_ref = 0;
+    g_app_foc.current_ref = 0;
     return true;
+}
+
+const struct foc_debug_sample *app_foc_get_debug_sample(void)
+{
+    return &g_app_foc.foc.debug_sample;
+}
+
+/**
+ * @brief  运行 FOC 慢环任务
+ */
+void app_foc_process(void)
+{
+    foc_run_slow(&g_app_foc.foc, (uint32_t)get_ticks());
 }
 
 /**
  * @brief  切换电机启停状态
- * @note   标定进行中会忽略该命令，避免锁轴过程被外部命令打断
+ * @note   对齐进行中会忽略该命令，避免零位标定被外部命令打断
  */
 void app_foc_motor_switch(void)
 {
-    if (logic_foc_calibration_is_active()) {
-        xlog_count("app_foc: ignore motor switch during calibration\r\n");
+    enum foc_mode mode = g_app_foc.foc.state.mode;
+
+    if (mode == FOC_MODE_ALIGN) {
+        xlog_count("app_foc: ignore motor switch during align\r\n");
         return;
     }
 
-    if (!g_app_foc.is_started) {
-        if (!g_app_foc.foc.runtime.electrical_zero_valid) {
-            xlog_count("app_foc: reject motor start, electrical zero not calibrated\r\n");
-            return;
-        }
-
-        pmsm_foc_start(&g_app_foc.foc, FOC_MODE_SPEED);
-        if (g_app_foc.foc.runtime.mode != FOC_MODE_SPEED) {
+    if (!_app_foc_is_running_mode(mode)) {
+        foc_command_current(&g_app_foc.foc, 0, g_app_foc.current_ref);
+        if (!_app_foc_is_running_mode(g_app_foc.foc.state.mode)) {
             xlog_count("app_foc: motor start failed\r\n");
-            return;
         }
-
-        g_app_foc.is_started = true;
-        pmsm_foc_set_speed_ref(&g_app_foc.foc, g_app_foc.speed_ref);
-        /* 当前工程还没有独立速度环调度，这里在改目标时同步跑一次速度 PI。 */
-        pmsm_foc_speed_loop(&g_app_foc.foc);
-        xlog_count("app_foc: motor start speed_ref=%.1f\r\n", (double)g_app_foc.speed_ref);
         return;
     }
 
-    pmsm_foc_stop(&g_app_foc.foc);
-    g_app_foc.is_started = false;
-    xlog_count("app_foc: motor stop\r\n");
+    foc_command_disable(&g_app_foc.foc);
+    xlog_count("app_foc: motor disable\r\n");
 }
 
 /**
- * @brief  增加速度给定
- * @note   标定进行中会忽略该命令
+ * @brief
+ * @note   对齐进行中会忽略该命令
  */
 void app_foc_speed_inc(void)
 {
-    if (logic_foc_calibration_is_active()) {
-        xlog_count("app_foc: ignore speed inc during calibration\r\n");
+    enum foc_mode mode = g_app_foc.foc.state.mode;
+
+    if (mode == FOC_MODE_ALIGN) {
+        xlog_count("app_foc: ignore speed inc during align\r\n");
         return;
     }
 
-    g_app_foc.speed_ref += APP_FOC_SPEED_STEP;
-
-    if (g_app_foc.is_started) {
-        pmsm_foc_set_speed_ref(&g_app_foc.foc, g_app_foc.speed_ref);
-        /* 当前工程还没有独立速度环调度，这里在改目标时同步跑一次速度 PI。 */
-        pmsm_foc_speed_loop(&g_app_foc.foc);
+    if (mode == FOC_MODE_CURRENT) {
+        g_app_foc.current_ref += 0.005f;
+        if (g_app_foc.current_ref >= 0.95f) {
+            g_app_foc.current_ref = 0.95f;
+        }
+        foc_command_current(&g_app_foc.foc, 0, g_app_foc.current_ref);
     }
-    xlog_count("app_foc: speed_ref inc to %.1f\r\n", (double)g_app_foc.speed_ref);
+
+    //    xlog_count("app_foc: speed_ref inc to %.1f\r\n", (double)g_app_foc.speed_ref);
 }
 
 /**
  * @brief  减少速度给定
- * @note   标定进行中会忽略该命令
+ * @note   对齐进行中会忽略该命令
  */
 void app_foc_speed_dec(void)
 {
-    if (logic_foc_calibration_is_active()) {
-        xlog_count("app_foc: ignore speed dec during calibration\r\n");
+    enum foc_mode mode = g_app_foc.foc.state.mode;
+
+    if (mode == FOC_MODE_ALIGN) {
+        xlog_count("app_foc: ignore speed inc during align\r\n");
         return;
     }
 
-    g_app_foc.speed_ref -= APP_FOC_SPEED_STEP;
-
-    if (g_app_foc.is_started) {
-        pmsm_foc_set_speed_ref(&g_app_foc.foc, g_app_foc.speed_ref);
-        /* 当前工程还没有独立速度环调度，这里在改目标时同步跑一次速度 PI。 */
-        pmsm_foc_speed_loop(&g_app_foc.foc);
+    if (mode == FOC_MODE_CURRENT) {
+        g_app_foc.current_ref -= 0.005f;
+        if (g_app_foc.current_ref <= 0.0f) {
+            g_app_foc.current_ref = 0.0f;
+        }
+        foc_command_current(&g_app_foc.foc, 0, g_app_foc.current_ref);
     }
 
-    xlog_count("app_foc: speed_ref dec to %.1f\r\n", (double)g_app_foc.speed_ref);
-}
-/**
- * @brief  获取全局 FOC 控制器对象
- * @return pmsm_foc_t 控制器指针
- */
-pmsm_foc_t *app_foc_get_foc(void)
-{
-    return &g_app_foc.foc;
+    //    xlog_count("app_foc: speed_ref inc to %.1f\r\n", (double)g_app_foc.speed_ref);
 }
 /*---------- end of file ----------*/

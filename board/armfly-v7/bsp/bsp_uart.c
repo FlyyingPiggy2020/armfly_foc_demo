@@ -35,18 +35,17 @@ static struct dev_uart_ops s_bsp_uart_ops = {
 };
 
 static struct dev_uart_describe s_bsp_usart1_desc = {
-    .config =
-        {
-            .baudrate = 921600U,
-            .databits = 8U,
-            .stopbits = 1U,
-            .parity = 0U,
-            .bufsz_rx = BSP_UART1_RX_BUF_SIZE,
-            .bufsz_tx = BSP_UART1_TX_BUF_SIZE,
-            .flags = DEV_UART_FLAG_PKT_MODE,
-            .rx_mode = UART_RX_MODE_STANDARD,
-            .tx_mode = UART_TX_MODE_ASYNC,
-        },
+    .config = {
+        .baudrate = 921600U,
+        .databits = 8U,
+        .stopbits = 1U,
+        .parity = 0U,
+        .bufsz_rx = BSP_UART1_RX_BUF_SIZE,
+        .bufsz_tx = BSP_UART1_TX_BUF_SIZE,
+        .flags = DEV_UART_FLAG_PKT_MODE,
+        .rx_mode = UART_RX_MODE_STANDARD,
+        .tx_mode = UART_TX_MODE_ASYNC,
+    },
     .ops = &s_bsp_uart_ops,
     .hw_handle = &huart1,
 };

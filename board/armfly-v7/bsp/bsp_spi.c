@@ -52,14 +52,13 @@ static struct spi_bus_ops s_bsp_spi_ops = {
 };
 
 static struct spi_bus_describe s_bsp_spi_tle5012b_desc = {
-    .config =
-        {
-            .cpol = 0U,
-            .cpha = 1U,
-            .cs_active_high = 0U,
-            .lsb_first = 0U,
-            .half_period_us = 0U,
-        },
+    .config = {
+        .cpol = 0U,
+        .cpha = 1U,
+        .cs_active_high = 0U,
+        .lsb_first = 0U,
+        .half_period_us = 0U,
+    },
     .ops = &s_bsp_spi_ops,
     .hw_handle = &s_bsp_spi_tle5012b_ctx,
 };
@@ -183,7 +182,6 @@ static fp_err_t _bsp_spi_xfer(struct spi_bus_describe *self, struct spi_bus_msg 
     if ((self == NULL) || (self->hw_handle == NULL) || (msgs == NULL) || (number == 0U)) {
         return E_WRONG_ARGS;
     }
-    
 
     ctx = (struct bsp_spi_ctx *)self->hw_handle;
 
