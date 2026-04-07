@@ -4,7 +4,7 @@
  * @Author       : lxf
  * @Date         : 2026-04-02 16:20:00
  * @LastEditors  : lxf_zjnb@qq.com
- * @LastEditTime : 2026-04-03 14:25:25
+ * @LastEditTime : 2026-04-07 10:17:01
  * @Brief        : armfly-v7 FOC 板级聚合实现
  */
 
@@ -18,13 +18,18 @@
 #include "pwmc.h"
 /*---------- macro ----------*/
 #define FOC_CURRENT_ADC_MID_CODE                 32767.0f
-#define FOC_CURRENT_ZERO_DRIFT_FILTER_B0         0.00391139f
-#define FOC_CURRENT_ZERO_DRIFT_FILTER_B1         0.00391139f
-#define FOC_CURRENT_ZERO_DRIFT_FILTER_A1         -0.99217722f
+#define FOC_CURRENT_ZERO_DRIFT_FILTER_B0         0.29289322f
+#define FOC_CURRENT_ZERO_DRIFT_FILTER_B1         0.29289322f
+#define FOC_CURRENT_ZERO_DRIFT_FILTER_A1         -0.41421356f
+#define FOC_CURRENT_SAMPLE_FILTER_B0             FOC_CURRENT_ZERO_DRIFT_FILTER_B0
+#define FOC_CURRENT_SAMPLE_FILTER_B1             FOC_CURRENT_ZERO_DRIFT_FILTER_B1
+#define FOC_CURRENT_SAMPLE_FILTER_A1             FOC_CURRENT_ZERO_DRIFT_FILTER_A1
+#define FOC_DEGREE_TO_RADIAN_SCALE               0.01745329252f
 #define FOC_ADC_CODE_TO_CURRENT_SCALE_A_PER_CODE 5.0354772e-5f // 将ADC转为实际电流的系数
 /*---------- type define ----------*/
 /*---------- variable prototype ----------*/
 static void _foc_port_reset_zero_drift_filter(FilterCoefficientsFloat *filter);
+static void _foc_port_reset_current_sample_filter(FilterCoefficientsFloat *filter);
 static bool _foc_port_read_fast_sample(void *user_data, struct foc_fast_sample *sample);
 static bool _foc_port_read_mechanical_angle(void *user_data, struct foc_mechanical_sample *sample);
 static uint32_t _foc_port_get_tick_ms(void *user_data);
@@ -37,14 +42,18 @@ static struct foc_config g_foc_config = {
         .angle_direction = 1,
         .current_base_a = 1.0f,
         .voltage_base_v = 6.9282f,
+        .speed_base_omega = 733.0f,
+        .phi_pu = 0.8253f,
+        .ld_pu = 0.2963f,
+        .lq_pu = 0.2963f,
     },
     .ctrl = {
-        .id_kp_pu = 0.5079f,
-        .id_ki_pu = 0.1156f,
-        .id_limit_pu = 0.5f,
-        .iq_kp_pu = 0.5079f,
-        .iq_ki_pu = 0.1156f,
-        .iq_limit_pu = 0.5f,
+        .id_kp_pu = 0.203f, // 2.0315f,
+        .id_ki_pu = 0.046f, // 0.4625f,
+        .id_limit_pu = 0.95f,
+        .iq_kp_pu = 0.203f, // 2.0315f,
+        .iq_ki_pu = 0.046f, // 0.4625f,
+        .iq_limit_pu = 0.95f,
         .speed_kp = 0.0f,
         .speed_ki = 0.0f,
         .speed_limit_pu = 0.0f,
@@ -52,7 +61,7 @@ static struct foc_config g_foc_config = {
         .speed_loop_hz = 200U,
     },
     .align = {
-        .voltage_d_pu = 0.12f,
+        .voltage_d_pu = 0.3f,
     },
 };
 
@@ -67,6 +76,9 @@ static const struct foc_port g_foc_port = {
 static struct foc_port_ctx g_foc_port_ctx = { 0 };
 static FilterCoefficientsFloat g_current_a_offset_filter = { 0 };
 static FilterCoefficientsFloat g_current_b_offset_filter = { 0 };
+static FilterCoefficientsFloat g_current_a_sample_filter = { 0 };
+static FilterCoefficientsFloat g_current_b_sample_filter = { 0 };
+static FilterCoefficientsFloat g_angle_speed_sample_filter = { 0 };
 static float g_current_a_offset = FOC_CURRENT_ADC_MID_CODE;
 static float g_current_b_offset = FOC_CURRENT_ADC_MID_CODE;
 /*---------- function ----------*/
@@ -84,6 +96,20 @@ static void _foc_port_reset_zero_drift_filter(FilterCoefficientsFloat *filter)
     filter->last_output = FOC_CURRENT_ADC_MID_CODE;
 }
 
+static void _foc_port_reset_current_sample_filter(FilterCoefficientsFloat *filter)
+{
+    if (filter == NULL) {
+        return;
+    }
+
+    filter->b[0] = FOC_CURRENT_SAMPLE_FILTER_B0;
+    filter->b[1] = FOC_CURRENT_SAMPLE_FILTER_B1;
+    filter->a[0] = 1.0f;
+    filter->a[1] = FOC_CURRENT_SAMPLE_FILTER_A1;
+    filter->last_input = FOC_CURRENT_ADC_MID_CODE;
+    filter->last_output = FOC_CURRENT_ADC_MID_CODE;
+}
+
 /**
  * @brief 读取电流、速度、角度、输出结果为实际值
  * @param {void} *user_data
@@ -95,9 +121,10 @@ static bool _foc_port_read_fast_sample(void *user_data, struct foc_fast_sample *
     union analog_ioctl_param param = { 0 };
     struct foc_mechanical_sample mechanical_sample = { 0 };
     struct foc_port_ctx *ctx = (struct foc_port_ctx *)user_data;
-    uint32_t sample_tick_us = 0U;
     uint16_t a_adc = 0U;
     uint16_t b_adc = 0U;
+    float a_adc_filtered = 0.0f;
+    float b_adc_filtered = 0.0f;
 
     if (sample == NULL) {
         return false;
@@ -127,10 +154,16 @@ static bool _foc_port_read_fast_sample(void *user_data, struct foc_fast_sample *
     if (!bsp_encoder_get_mechanical_angle_sample(&mechanical_sample)) {
         return false;
     }
-
-    sample->ia = ((float)a_adc - g_current_a_offset) * FOC_ADC_CODE_TO_CURRENT_SCALE_A_PER_CODE;
-    sample->ib = ((float)b_adc - g_current_b_offset) * FOC_ADC_CODE_TO_CURRENT_SCALE_A_PER_CODE;
+    extern float debug_data[8];
+    sample->ia = (a_adc - g_current_a_offset) * FOC_ADC_CODE_TO_CURRENT_SCALE_A_PER_CODE;
+    sample->ib = (b_adc - g_current_b_offset) * FOC_ADC_CODE_TO_CURRENT_SCALE_A_PER_CODE;
+    debug_data[0] = sample->ia;
+    a_adc_filtered = low_pass_filter_f(&g_current_a_sample_filter, (float)sample->ia);
+    b_adc_filtered = low_pass_filter_f(&g_current_b_sample_filter, (float)sample->ib);
+    sample->ia = a_adc_filtered;
+    sample->ib = b_adc_filtered;
     sample->mech_angle_deg = mechanical_sample.angle_deg;
+    sample->angle_speed_rad_s = low_pass_filter_f(&g_angle_speed_sample_filter, mechanical_sample.speed_deg_s * FOC_DEGREE_TO_RADIAN_SCALE);
 
     return true;
 }
@@ -194,6 +227,9 @@ bool foc_port_init(void)
 
     _foc_port_reset_zero_drift_filter(&g_current_a_offset_filter);
     _foc_port_reset_zero_drift_filter(&g_current_b_offset_filter);
+    _foc_port_reset_current_sample_filter(&g_current_a_sample_filter);
+    _foc_port_reset_current_sample_filter(&g_current_b_sample_filter);
+    _foc_port_reset_current_sample_filter(&g_angle_speed_sample_filter);
     g_current_a_offset = FOC_CURRENT_ADC_MID_CODE;
     g_current_b_offset = FOC_CURRENT_ADC_MID_CODE;
 

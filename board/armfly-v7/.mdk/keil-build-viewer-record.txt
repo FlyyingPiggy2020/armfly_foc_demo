@@ -1,12 +1,12 @@
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
        438          0          4         36         32          0   analog.o
-       158          0          0          0          8          0   app_comm.o
-       634          0          0        320          0          0   app_foc.o
+       152          0          0          0         40          0   app_comm.o
+       582          0          0        352          0          0   app_foc.o
        330          0          0          0         56          0   app_key.o
         74          0          0          0         32          0   app_msgbus.o
        698          0          4         54        244          0   bsp_adc.o
-       300          0          0          0         12          0   bsp_encoder.o
-       794          0          4         68         76          0   bsp_foc.o
+       320          0          0          0         12          0   bsp_encoder.o
+       962          0          4         84        148          0   bsp_foc.o
        356          0          4         48        184          0   bsp_key.o
       1002          0          4         48        196          0   bsp_pwm.o
       1342          0          4         64        184          0   bsp_spi.o
@@ -17,7 +17,7 @@
       1578          0          4         36         40          0   dev_uart.o
        292          0          0          0          0          0   device.o
        108          0          0          0          0          0   driver.o
-      1104          0          0          0          0          0   foc.o
+      1160          0          0          0          0          0   foc.o
        848          0          0          0          0          0   foc_math.o
        172          0          0          0          0          0   foc_pi.o
        306          0          4          0        408          0   fplog.o
@@ -47,7 +47,7 @@
        200          0          0          0          0          0   stm32h7xx_hal_uart_ex.o
         48          0          0          0          0          0   stm32h7xx_it.o
        240          0         16          8          0          0   system_stm32h7xx.o
-       402          0        256          0          0          0   tle5012b_sensor.o
+       518          0        256          0          0          0   tle5012b_sensor.o
         92          0          0          0         40          0   vofa.o
 Object Totals
 
@@ -55,15 +55,15 @@ Memory Map of the image
 
 	Load Region LR_IROM1 
 
-		Execution Region ER_IROM1 (Exec base: 0x08000000, Size: 0x0000F228, Max: 0x00200000, END)
+		Execution Region ER_IROM1 (Exec base: 0x08000000, Size: 0x0000F358, Max: 0x00200000, END)
 
 		Execution Region DEV_REGION (Exec base: 0x20000000, Size: 0x000000F0, Max: 0x00000200, END)
 
 		Execution Region DRV_REGION (Exec base: 0x20000200, Size: 0x000000B4, Max: 0x00000200, END)
 
-		Execution Region RW_DTCM (Exec base: 0x20000400, Size: 0x00000140, Max: 0x0001FC00, END)
+		Execution Region RW_DTCM (Exec base: 0x20000400, Size: 0x00000160, Max: 0x0001FC00, END)
 
-		Execution Region RW_AXI_SRAM (Exec base: 0x24000000, Size: 0x00001EC0, Max: 0x00080000, END)
+		Execution Region RW_AXI_SRAM (Exec base: 0x24000000, Size: 0x00001F38, Max: 0x00080000, END)
 
 		Execution Region RW_D2_DMA (Exec base: 0x30000000, Size: 0x00000008, Max: 0x00048000, END)
 

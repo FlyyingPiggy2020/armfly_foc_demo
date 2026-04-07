@@ -4,11 +4,13 @@
  * @Author       : lxf
  * @Date         : 2026-03-17 15:55:00
  * @LastEditors  : lxf_zjnb@qq.com
- * @LastEditTime : 2026-04-02 19:05:00
+ * @LastEditTime : 2026-04-06 10:47:04
  * @Brief        : FOC 应用层实现
  */
 
 /*---------- includes ----------*/
+#include "foc.h"
+#include "foc_types.h"
 #include "options.h"
 #include "app_foc.h"
 #include "app_msgbus.h"
@@ -17,16 +19,13 @@
 #include "message_bus.h"
 #include <string.h>
 /*---------- macro ----------*/
-#define APP_FOC_DEFAULT_SPEED_REF 300.0f
-#define APP_FOC_SPEED_STEP        100.0f
-#define APP_FOC_LOCK_ID_REF       0.0f
-#define APP_FOC_LOCK_IQ_REF       0.06f
-#define APP_FOC_NODE_NAME         "foc"
+#define APP_FOC_NODE_NAME "foc"
 /*---------- type define ----------*/
 struct app_foc_ctx {
     struct foc_motor foc;
     struct msgbus_node node;
     msgbus_service_t foc_service;
+    foc_scalar_t current_ref;
     foc_scalar_t speed_ref;
 };
 /*---------- variable prototype ----------*/
@@ -129,14 +128,6 @@ static int32_t _app_foc_service_handler(
                 return -MSGBUS_ERR_INVALID_ARGS;
             }
             memset(&service_resp->data.foc_realtime, 0, sizeof(service_resp->data.foc_realtime));
-            service_resp->data.foc_realtime.current_a_real = g_app_foc.foc.debug_sample.ia;
-            service_resp->data.foc_realtime.current_b_real = g_app_foc.foc.debug_sample.ib;
-            service_resp->data.foc_realtime.current_d_pu = g_app_foc.foc.debug_sample.current_d_pu;
-            service_resp->data.foc_realtime.current_q_pu = g_app_foc.foc.debug_sample.current_q_pu;
-            service_resp->data.foc_realtime.voltage_d_pu = g_app_foc.foc.debug_sample.voltage_d_pu;
-            service_resp->data.foc_realtime.voltage_q_pu = g_app_foc.foc.debug_sample.voltage_q_pu;
-            service_resp->data.foc_realtime.mechanical_angle_deg = g_app_foc.foc.debug_sample.mech_angle_deg;
-            service_resp->data.foc_realtime.electrical_angle_deg = g_app_foc.foc.debug_sample.electrical_angle_deg;
             *resp_size = sizeof(*service_resp);
             break;
         default:
@@ -194,9 +185,14 @@ bool app_foc_init(void)
         return false;
     }
 
-    g_app_foc.speed_ref = APP_FOC_DEFAULT_SPEED_REF;
-
+    g_app_foc.speed_ref = 0;
+    g_app_foc.current_ref = 0;
     return true;
+}
+
+const struct foc_debug_sample *app_foc_get_debug_sample(void)
+{
+    return &g_app_foc.foc.debug_sample;
 }
 
 /**
@@ -221,7 +217,7 @@ void app_foc_motor_switch(void)
     }
 
     if (!_app_foc_is_running_mode(mode)) {
-        foc_command_current(&g_app_foc.foc, APP_FOC_LOCK_ID_REF, APP_FOC_LOCK_IQ_REF);
+        foc_command_current(&g_app_foc.foc, 0, g_app_foc.current_ref);
         if (!_app_foc_is_running_mode(g_app_foc.foc.state.mode)) {
             xlog_count("app_foc: motor start failed\r\n");
         }
@@ -233,7 +229,7 @@ void app_foc_motor_switch(void)
 }
 
 /**
- * @brief  增加速度给定
+ * @brief
  * @note   对齐进行中会忽略该命令
  */
 void app_foc_speed_inc(void)
@@ -245,13 +241,15 @@ void app_foc_speed_inc(void)
         return;
     }
 
-    g_app_foc.speed_ref += APP_FOC_SPEED_STEP;
-
-    if (mode == FOC_MODE_SPEED) {
-        foc_command_speed(&g_app_foc.foc, g_app_foc.speed_ref);
+    if (mode == FOC_MODE_CURRENT) {
+        g_app_foc.current_ref += 0.005f;
+        if (g_app_foc.current_ref >= 0.95f) {
+            g_app_foc.current_ref = 0.95f;
+        }
+        foc_command_current(&g_app_foc.foc, 0, g_app_foc.current_ref);
     }
 
-    xlog_count("app_foc: speed_ref inc to %.1f\r\n", (double)g_app_foc.speed_ref);
+    //    xlog_count("app_foc: speed_ref inc to %.1f\r\n", (double)g_app_foc.speed_ref);
 }
 
 /**
@@ -263,16 +261,18 @@ void app_foc_speed_dec(void)
     enum foc_mode mode = g_app_foc.foc.state.mode;
 
     if (mode == FOC_MODE_ALIGN) {
-        xlog_count("app_foc: ignore speed dec during align\r\n");
+        xlog_count("app_foc: ignore speed inc during align\r\n");
         return;
     }
 
-    g_app_foc.speed_ref -= APP_FOC_SPEED_STEP;
-
-    if (mode == FOC_MODE_SPEED) {
-        foc_command_speed(&g_app_foc.foc, g_app_foc.speed_ref);
+    if (mode == FOC_MODE_CURRENT) {
+        g_app_foc.current_ref -= 0.005f;
+        if (g_app_foc.current_ref <= 0.0f) {
+            g_app_foc.current_ref = 0.0f;
+        }
+        foc_command_current(&g_app_foc.foc, 0, g_app_foc.current_ref);
     }
 
-    xlog_count("app_foc: speed_ref dec to %.1f\r\n", (double)g_app_foc.speed_ref);
+    //    xlog_count("app_foc: speed_ref inc to %.1f\r\n", (double)g_app_foc.speed_ref);
 }
 /*---------- end of file ----------*/

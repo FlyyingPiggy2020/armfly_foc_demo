@@ -28,6 +28,12 @@ extern "C" {
 bool app_foc_init(void);
 
 /**
+ * @brief  获取 FOC 调试采样
+ * @return 调试采样只读指针
+ */
+const struct foc_debug_sample *app_foc_get_debug_sample(void);
+
+/**
  * @brief  运行 FOC 慢环任务
  */
 void app_foc_process(void);

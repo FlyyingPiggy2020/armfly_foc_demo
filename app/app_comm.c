@@ -3,14 +3,15 @@
  * @FilePath     : app_comm.c
  * @Author       : Codex
  * @Date         : 2026-03-24 10:55:00
- * @LastEditors  : Codex
- * @LastEditTime : 2026-03-24 12:05:00
+ * @LastEditors  : lxf_zjnb@qq.com
+ * @LastEditTime : 2026-04-06 15:55:39
  * @Brief        : 应用层串口调试传输实现
  */
 
 /*---------- includes ----------*/
 #include "options.h"
 #include "app_comm.h"
+#include "app_foc.h"
 #include "device.h"
 #include "vofa/vofa.h"
 #include <string.h>
@@ -48,24 +49,31 @@ bool app_comm_init(void)
 
     return true;
 }
-
+float debug_data[8] = { 0 };
 bool app_comm_send_foc_realtime(const struct app_protocol_foc_realtime *realtime)
 {
-    float values[8];
+    const struct foc_debug_sample *debug_sample = NULL;
+    float values[8] = { 0 };
 
-    if ((!g_app_comm.is_init) || (g_app_comm.uart_dev == NULL) || (realtime == NULL)) {
+    (void)realtime;
+
+    if ((!g_app_comm.is_init) || (g_app_comm.uart_dev == NULL)) {
         return false;
     }
 
-    values[0] = realtime->current_a_real;
-    values[1] = realtime->current_b_real;
-    values[2] = realtime->current_d_pu;
-    values[3] = realtime->current_q_pu;
-    values[4] = realtime->voltage_d_pu;
-    values[5] = realtime->voltage_q_pu;
-    values[6] = realtime->mechanical_angle_deg;
-    values[7] = realtime->electrical_angle_deg;
+    debug_sample = app_foc_get_debug_sample();
+    if (debug_sample == NULL) {
+        return false;
+    }
 
+    values[0] = debug_sample->ia;
+    values[1] = debug_sample->ib;
+    values[2] = debug_sample->mech_speed_rad_s;
+    values[3] = debug_sample->extra[0];
+    values[4] = debug_sample->electrical_angle_deg;
+    values[5] = debug_sample->current_d_pu;
+    values[6] = debug_sample->current_q_pu;
+    values[7] = debug_data[0];
     return (vofa_send(values, 8U) == 0);
 }
 

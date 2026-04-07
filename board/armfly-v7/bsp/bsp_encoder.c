@@ -52,6 +52,18 @@ static bool _bsp_encoder_read_angle_data(struct tle5012b_angle_data *angle_data)
     return tle5012b_sensor_read_angle(&g_bsp_encoder_ctx.sensor, angle_data) == E_OK;
 }
 
+static bool _bsp_encoder_read_speed_data(struct tle5012b_speed_data *speed_data)
+{
+    if (speed_data == NULL) {
+        return false;
+    }
+    if (!g_bsp_encoder_ctx.is_ready) {
+        return false;
+    }
+
+    return tle5012b_sensor_read_speed(&g_bsp_encoder_ctx.sensor, speed_data) == E_OK;
+}
+
 int bsp_encoder_init(void)
 {
     if (g_bsp_encoder_ctx.is_ready) {
@@ -95,6 +107,7 @@ bool bsp_encoder_get_mechanical_angle_deg(float *mechanical_angle_deg)
 bool bsp_encoder_get_mechanical_angle_sample(struct foc_mechanical_sample *sample)
 {
     struct tle5012b_angle_data angle_data = { 0 };
+    struct tle5012b_speed_data speed_data = { 0 };
 
     if (sample == NULL) {
         return false;
@@ -105,9 +118,12 @@ bool bsp_encoder_get_mechanical_angle_sample(struct foc_mechanical_sample *sampl
     if (!_bsp_encoder_read_angle_data(&angle_data)) {
         return false;
     }
+    if (!_bsp_encoder_read_speed_data(&speed_data)) {
+        return false;
+    }
 
     sample->angle_deg = _bsp_encoder_wrap_angle_deg(angle_data.mechanical_angle_deg);
-    sample->speed_deg_s = 0.0f;
+    sample->speed_deg_s = speed_data.mechanical_speed_deg_s;
 
     return true;
 }
